@@ -264,6 +264,67 @@ def security_logs():
 def phishing_demo():
     return render_template('phishing.html')
 
+@app.route('/api/phishing-demo', methods=['POST'])
+def api_phishing_demo():
+    """
+    Simulated Phishing Endpoint for Educational Testing.
+    Processes dummy credential submission, checks security mode, logs audit events with redacted credentials.
+    """
+    data = request.get_json() or {}
+    email = data.get('email', '').strip()
+    password = data.get('password', '').strip()
+    simulated_origin = data.get('origin', 'saasflow-security.local').strip()
+    mode = session.get('security_mode', 'VULNERABLE')
+
+    # Input Validation
+    if not email or not password:
+        return jsonify({
+            'success': False,
+            'error': 'Email Address and Password are required.'
+        }), 400
+
+    # Strict Dummy Credential Enforcement
+    if email != 'demo@example.com' or password != 'DemoPassword123!':
+        return jsonify({
+            'success': False,
+            'error': 'Invalid simulation credentials. Only predefined dummy credentials (demo@example.com / DemoPassword123!) are permitted in this lab.'
+        }), 400
+
+    if mode == 'VULNERABLE':
+        add_security_log(
+            "PHISHING_CREDENTIAL_INTERCEPTED",
+            f"Simulated credential interception on untrusted domain origin '{simulated_origin}' for account '{email}'. Password: [REDACTED]",
+            "EXPLOITED"
+        )
+        return jsonify({
+            'success': True,
+            'mode': 'VULNERABLE',
+            'status': 'INTERCEPTED',
+            'message': 'Simulated Credential Intercepted',
+            'email': email,
+            'password_display': '[REDACTED]',
+            'origin': simulated_origin,
+            'details': f"Credentials harvested by fake endpoint on '{simulated_origin}'! Target: {email}, Password: [REDACTED].",
+            'explanation': "VULNERABLE MODE: Web app accepted credential submission on lookalike domain without verifying origin domain integrity."
+        })
+    else:
+        add_security_log(
+            "PHISHING_ATTEMPT_BLOCKED",
+            f"Untrusted domain origin '{simulated_origin}' detected for account '{email}'. Form submission blocked. Password: [REDACTED]",
+            "BLOCKED"
+        )
+        return jsonify({
+            'success': True,
+            'mode': 'SECURE',
+            'status': 'BLOCKED',
+            'message': 'UNTRUSTED ORIGIN DETECTED — SUBMISSION BLOCKED',
+            'email': email,
+            'origin': simulated_origin,
+            'details': f"SaaSFlow Origin Guard detected untrusted origin '{simulated_origin}'. Credential submission was blocked.",
+            'explanation': "PROTECTED MODE: Origin validation detected that the current domain does not match the trusted domain (saasflow.io). Credential submission was neutralized."
+        })
+
+
 @app.route('/settings')
 def settings():
     if 'user_id' not in session:

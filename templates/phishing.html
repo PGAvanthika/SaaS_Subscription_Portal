@@ -4,6 +4,7 @@
 {% block page_title %}Phishing Threat & Origin Verification Simulation{% endblock %}
 
 {% block content %}
+<!-- Laboratory Overview Header -->
 <div class="enterprise-card" style="margin-bottom: 24px;">
   <div class="card-top">
     <h3 class="card-heading">
@@ -19,40 +20,88 @@
   </p>
 </div>
 
-{% if session.get('security_mode') == 'SECURE' %}
-<!-- SECURE MODE DEFENSE BANNER -->
-<div style="background: rgba(244, 63, 94, 0.15); border: 1px solid rgba(244, 63, 94, 0.4); border-radius: var(--radius-md); padding: 16px 20px; margin-bottom: 24px; display: flex; align-items: center; gap: 14px;">
-  <svg class="icon-svg" viewBox="0 0 24 24" style="width:28px; height:28px; color:#f43f5e; flex-shrink:0;"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-  <div>
-    <h4 style="color: #f43f5e; font-size: 14px; font-weight: 700;">SECURITY ALERT: UNTRUSTED DOMAIN ORIGIN DETECTED</h4>
-    <p style="font-size: 12.5px; color: var(--text-main); margin-top: 2px;">
-      SaaSFlow Origin Guard detected that this form is executing on a suspicious domain origin (<code>saasflow-security.local</code>). Never enter portal credentials on unverified domain origins.
-    </p>
+<!-- Domain Comparison Bar -->
+<div class="enterprise-card" style="margin-bottom: 24px; padding: 14px 20px; background: var(--bg-card);">
+  <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; font-size: 13px;">
+    <div>
+      <span style="color: var(--text-subtle); margin-right: 6px;">Trusted Platform Domain:</span>
+      <code style="color: #34d399; background: rgba(52, 211, 153, 0.1); padding: 4px 8px; border-radius: 4px; border: 1px solid rgba(52, 211, 153, 0.3);">https://saasflow.io</code>
+    </div>
+    <div>
+      <span style="color: var(--text-subtle); margin-right: 6px;">Simulated Spoofed Origin:</span>
+      <code style="color: #f43f5e; background: rgba(244, 63, 94, 0.1); padding: 4px 8px; border-radius: 4px; border: 1px solid rgba(244, 63, 94, 0.3);">http://saasflow-security.local/login</code>
+    </div>
   </div>
 </div>
-{% endif %}
 
-<!-- Simulated Spoofed Login Card -->
-<div style="max-width: 440px; margin: 0 auto;">
-  <div class="enterprise-card" style="border: 2px dashed {% if session.get('security_mode') == 'SECURE' %}#f43f5e{% else %}var(--border-subtle){% endif %};">
-    <div style="text-align: center; margin-bottom: 20px;">
-      <div style="font-size: 10px; background: rgba(244, 63, 94, 0.2); color:#f43f5e; font-weight:700; padding: 2px 8px; border-radius:4px; display:inline-block; margin-bottom: 10px; border: 1px solid rgba(244, 63, 94, 0.3);">SIMULATED PHISHING LANDING PAGE</div>
-      <div class="brand-icon" style="margin: 0 auto 10px auto; width: 40px; height: 40px;">
-        <svg class="icon-svg" viewBox="0 0 24 24" style="width:20px; height:20px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
-      </div>
-      <h3 style="font-size: 17px; font-weight: 700;">SaaSFlow Account Re-verification</h3>
-      <p style="font-size: 12px; color: var(--text-subtle);">Re-authenticate to prevent suspension</p>
+<div class="grid-2">
+  <!-- Step 1: Simulated Phishing Email Message -->
+  <div class="enterprise-card">
+    <div class="card-top">
+      <h4 style="font-size: 15px; font-weight: 700; color: #fff;">
+        <svg class="icon-svg" viewBox="0 0 24 24" style="color:var(--accent-blue);"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        Simulated Phishing Email Message
+      </h4>
+      <span class="status-pill info">Step 1: Social Engineering</span>
     </div>
 
-    <form onsubmit="event.preventDefault(); simulatePhishHarvest();">
+    <div style="background: var(--bg-input); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 14px; margin-bottom: 14px; font-size: 13px;">
+      <div style="margin-bottom: 6px;"><strong>From:</strong> <code style="color:#f43f5e;">security-update@saasflow-security.local</code></div>
+      <div style="margin-bottom: 6px;"><strong>To:</strong> <code>demo@example.com</code></div>
+      <div style="margin-bottom: 12px;"><strong>Subject:</strong> <span style="color:#fbbf24; font-weight:600;">URGENT: Verify SaaSFlow Account Credentials</span></div>
+      <hr style="border: 0; border-top: 1px solid var(--border-subtle); margin: 10px 0;">
+      <p style="color: var(--text-muted); font-size: 12.5px; margin-bottom: 12px;">
+        Dear SaaSFlow Customer,<br><br>
+        Suspicious activity was detected on your account. To maintain access and avoid service interruption, please click the button below to re-verify your credentials immediately.
+      </p>
+      <div style="text-align: center; margin: 16px 0;">
+        <button type="button" class="btn btn-primary" onclick="openFakeLoginForm()" style="padding: 8px 18px; font-weight:600;">
+          Verify Account
+        </button>
+      </div>
+      <p style="font-size: 11px; color: var(--text-subtle); text-align: center;">
+        Predefined test credentials: <code>demo@example.com</code> / <code>DemoPassword123!</code>
+      </p>
+    </div>
+  </div>
+
+  <!-- Step 2: Simulated Fake Login Interface -->
+  <div class="enterprise-card" id="fakeLoginCard" style="border: 2px dashed {% if session.get('security_mode') == 'SECURE' %}#f43f5e{% else %}var(--border-subtle){% endif %};">
+    <div class="card-top">
+      <div style="font-size: 10px; background: rgba(244, 63, 94, 0.2); color:#f43f5e; font-weight:700; padding: 2px 8px; border-radius:4px; border: 1px solid rgba(244, 63, 94, 0.3);">SIMULATED PHISHING LANDING PAGE</div>
+      <button type="button" class="btn btn-outline" style="font-size: 11px; padding: 3px 8px;" onclick="resetPhishDemo()">Reset / Replay</button>
+    </div>
+
+    {% if session.get('security_mode') == 'SECURE' %}
+    <!-- SECURE MODE DEFENSE BANNER -->
+    <div style="background: rgba(244, 63, 94, 0.15); border: 1px solid rgba(244, 63, 94, 0.4); border-radius: var(--radius-sm); padding: 12px 14px; margin-bottom: 16px; display: flex; align-items: center; gap: 10px;">
+      <svg class="icon-svg" viewBox="0 0 24 24" style="width:24px; height:24px; color:#f43f5e; flex-shrink:0;"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      <div>
+        <h4 style="color: #f43f5e; font-size: 13px; font-weight: 700; margin:0;">SECURITY ALERT: UNTRUSTED DOMAIN ORIGIN DETECTED</h4>
+        <p style="font-size: 11.5px; color: var(--text-main); margin-top: 2px;">
+          SaaSFlow Origin Guard detected execution on unverified origin (<code>saasflow-security.local</code>). Submissions will be blocked.
+        </p>
+      </div>
+    </div>
+    {% endif %}
+
+    <div style="text-align: center; margin-bottom: 16px;">
+      <div class="brand-icon" style="margin: 0 auto 10px auto; width: 36px; height: 36px;">
+        <svg class="icon-svg" viewBox="0 0 24 24" style="width:18px; height:18px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+      </div>
+      <h3 style="font-size: 16px; font-weight: 700;">SaaSFlow Account Re-verification</h3>
+      <p style="font-size: 12px; color: var(--text-subtle);">Re-authenticate to prevent portal suspension</p>
+    </div>
+
+    <form onsubmit="event.preventDefault(); submitPhishingSimulation();">
       <div class="form-group">
         <label class="form-label">Email Address</label>
-        <input type="text" id="phishUser" class="form-control" placeholder="user@company.com" required>
+        <input type="text" id="phishUser" class="form-control" value="demo@example.com" placeholder="user@company.com" required>
       </div>
 
       <div class="form-group">
         <label class="form-label">Password</label>
-        <input type="password" id="phishPass" class="form-control" placeholder="Enter account password" required>
+        <input type="password" id="phishPass" class="form-control" value="DemoPassword123!" placeholder="Enter account password" required>
       </div>
 
       <button type="submit" class="btn btn-danger" style="width: 100%;">
@@ -60,21 +109,82 @@
       </button>
     </form>
 
-    <div id="phishOutput" style="margin-top: 14px; font-size: 12.5px; padding: 10px; border-radius: 6px; display: none;"></div>
+    <div id="phishOutput" style="margin-top: 14px; font-size: 12.5px; padding: 12px; border-radius: 6px; display: none;"></div>
   </div>
 </div>
 
 <script>
-function simulatePhishHarvest() {
-  const u = document.getElementById('phishUser').value;
-  const p = document.getElementById('phishPass').value;
+function openFakeLoginForm() {
+  const card = document.getElementById('fakeLoginCard');
+  card.scrollIntoView({ behavior: 'smooth' });
+  document.getElementById('phishUser').focus();
+}
+
+function resetPhishDemo() {
+  document.getElementById('phishUser').value = 'demo@example.com';
+  document.getElementById('phishPass').value = 'DemoPassword123!';
   const out = document.getElementById('phishOutput');
-  
+  out.style.display = 'none';
+  out.innerHTML = '';
+}
+
+async function submitPhishingSimulation() {
+  const u = document.getElementById('phishUser').value.trim();
+  const p = document.getElementById('phishPass').value.trim();
+  const out = document.getElementById('phishOutput');
+
   out.style.display = 'block';
-  out.style.background = 'rgba(244, 63, 94, 0.15)';
-  out.style.border = '1px solid rgba(244, 63, 94, 0.3)';
-  out.style.color = '#f43f5e';
-  out.innerHTML = `<strong>PHISHING SIMULATION RESULT:</strong><br>Credentials intercepted by fake endpoint! User: <code>${u}</code>, Password: <code>${p}</code>.<br><br><em>Always verify domain URL certificates in the browser address bar!</em>`;
+  out.innerHTML = '<em>Processing simulation check...</em>';
+
+  try {
+    const res = await fetch('/api/phishing-demo', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: u,
+        password: p,
+        origin: 'saasflow-security.local'
+      })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok || !data.success) {
+      out.style.background = 'rgba(239, 68, 68, 0.15)';
+      out.style.border = '1px solid rgba(239, 68, 68, 0.4)';
+      out.style.color = '#ef4444';
+      out.innerHTML = `<strong>SIMULATION ERROR:</strong> ${data.error || 'Request failed.'}`;
+      return;
+    }
+
+    if (data.mode === 'VULNERABLE') {
+      out.style.background = 'rgba(244, 63, 94, 0.15)';
+      out.style.border = '1px solid rgba(244, 63, 94, 0.4)';
+      out.style.color = '#f43f5e';
+      out.innerHTML = `
+        <div style="font-weight:700; font-size:13px; margin-bottom:4px;">STATUS: ${data.message}</div>
+        <div>${data.details}</div>
+        <div style="margin-top:6px; color:var(--text-muted); font-size:11.5px;">${data.explanation}</div>
+        <div style="margin-top:8px; font-weight:600; color:#fbbf24;">✓ Security event added to Audit Logs stream. Password handled as [REDACTED].</div>
+      `;
+    } else {
+      out.style.background = 'rgba(16, 185, 129, 0.15)';
+      out.style.border = '1px solid rgba(16, 185, 129, 0.4)';
+      out.style.color = '#34d399';
+      out.innerHTML = `
+        <div style="font-weight:700; font-size:13px; margin-bottom:4px;">STATUS: ${data.message}</div>
+        <div>${data.details}</div>
+        <div style="margin-top:6px; color:var(--text-muted); font-size:11.5px;">${data.explanation}</div>
+        <div style="margin-top:8px; font-weight:600; color:#34d399;">✓ Origin security event added to Audit Logs stream. Credential submission blocked.</div>
+      `;
+    }
+  } catch (err) {
+    out.style.background = 'rgba(239, 68, 68, 0.15)';
+    out.style.border = '1px solid rgba(239, 68, 68, 0.4)';
+    out.style.color = '#ef4444';
+    out.innerHTML = `<strong>NETWORK ERROR:</strong> Failed to reach simulation endpoint. (${err})`;
+  }
 }
 </script>
 {% endblock %}
+
