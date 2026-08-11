@@ -1,178 +1,244 @@
 {% extends 'base.html' %}
 
-{% block title %}Security Laboratory - CyberVault{% endblock %}
-{% block page_title %}Security Attack & Defense Laboratory{% endblock %}
+{% block title %}Attack Lab - SaaSFlow Enterprise Security{% endblock %}
+{% block page_title %}Security Controls & Attack Simulation Laboratory{% endblock %}
 
 {% block content %}
-<!-- Laboratory Overview Hero -->
-<div class="lab-hero">
-  <div>
-    <h2 style="font-size: 22px; font-weight: 800; margin-bottom: 6px; color: #fff;">
-      🧪 CyberVault Interactive Security Test Center
-    </h2>
-    <p style="color: var(--text-muted); font-size: 14px; max-width: 680px;">
-      Demonstrating the contrast between <strong>Vulnerable Behavior</strong> vs <strong>Secure Implementation</strong> across 6 critical web application security domains. Switch modes using the top-right toggle bar.
-    </p>
-  </div>
-  <div>
-    <span class="status-badge {% if session.get('security_mode') == 'SECURE' %}secure{% else %}vulnerable{% endif %}" style="font-size: 14px; padding: 8px 16px;">
-      Active Mode: {{ session.get('security_mode', 'VULNERABLE') }}
-    </span>
+<!-- Laboratory Overview Header -->
+<div class="enterprise-card" style="margin-bottom: 24px; border-left: 4px solid var(--accent-blue);">
+  <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
+    <div>
+      <h2 style="font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 4px;">
+        SaaSFlow Threat Simulation & Control Verification Center
+      </h2>
+      <p style="color: var(--text-muted); font-size: 13px; max-width: 720px;">
+        Empirical security validation suite evaluating application resilience against 6 core attack vectors. Switch platform security mode in top-right header to test live attack execution vs defense mechanisms.
+      </p>
+    </div>
+    <div>
+      <span class="status-pill {% if session.get('security_mode') == 'SECURE' %}secure{% else %}vulnerable{% endif %}" style="font-size: 12px; padding: 6px 14px;">
+        Active Platform Mode: {% if session.get('security_mode') == 'SECURE' %}PROTECTED (SECURE MODE){% else %}EXPOSED (VULNERABLE MODE){% endif %}
+      </span>
+    </div>
   </div>
 </div>
 
-<!-- 6 Vulnerability Concept Cards Grid -->
-<div class="grid-2">
+<!-- Interactive SQL Injection Studio -->
+<div class="enterprise-card" style="margin-bottom: 24px;">
+  <div class="card-top">
+    <h3 class="card-heading">
+      <svg class="icon-svg" viewBox="0 0 24 24" style="color:var(--accent-blue);"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      1. SQL Injection (SQLi) Live Execution Studio
+    </h3>
+    <span class="status-pill {% if session.get('security_mode') == 'SECURE' %}secure{% else %}vulnerable{% endif %}">
+      {% if session.get('security_mode') == 'SECURE' %}BLOCKED / PARAMETERIZED{% else %}VULNERABLE / RAW CONCATENATION{% endif %}
+    </span>
+  </div>
+  <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 14px;">
+    Attacker manipulates database queries by injecting SQL syntax characters into parameters. Test raw concatenation against parameterized prepared statement execution below.
+  </p>
 
-  <!-- Concept 1: SQL Injection -->
-  <div class="glass-card">
-    <div class="card-header">
-      <h3 class="card-title">1. 💉 SQL Injection (SQLi)</h3>
-      <span class="status-badge {% if session.get('security_mode') == 'SECURE' %}secure{% else %}vulnerable{% endif %}">
-        {% if session.get('security_mode') == 'SECURE' %}Parameterized Prepared Statements{% else %}Raw Concatenation{% endif %}
-      </span>
+  <div class="grid-2" style="margin-bottom: 0;">
+    <div>
+      <label class="form-label">Payload Injection String</label>
+      <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+        <input type="text" id="sqliPayloadInput" class="form-control" value="admin' --" placeholder="Enter SQL payload">
+        <button class="btn btn-primary" style="white-space: nowrap;" onclick="executeSqliTest()">Run Injection</button>
+      </div>
+
+      <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+        <button type="button" class="btn btn-outline" style="font-size: 11px; padding: 4px 8px;" onclick="setSqliPayload('admin\' --')">Auth Bypass (`admin' --`)</button>
+        <button type="button" class="btn btn-outline" style="font-size: 11px; padding: 4px 8px;" onclick="setSqliPayload('\' OR \'1\'=\'1')">Universal Match (`' OR '1'='1`)</button>
+        <button type="button" class="btn btn-outline" style="font-size: 11px; padding: 4px 8px;" onclick="setSqliPayload('\' UNION SELECT 1, \'hacker\', \'hack@leak.io\', \'rawpass\', \'admin\' --')">Union Data Extraction</button>
+      </div>
     </div>
-    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
-      Attacker bypasses authentication or extracts database content by injecting raw SQL code into input parameters.
-    </p>
-    <div style="background: rgba(0,0,0,0.3); padding: 12px; border-radius: var(--radius-sm); font-family: var(--font-mono); font-size: 12px; margin-bottom: 16px;">
-      {% if session.get('security_mode') == 'SECURE' %}
-        <span style="color:#34d399;"># SECURE: Prepared Statement</span><br>
-        query = "SELECT * FROM users WHERE username = %s AND password_hash = %s"
-      {% else %}
-        <span style="color:#f87171;"># VULNERABLE: Direct Query Concatenation</span><br>
-        query = "SELECT * FROM users WHERE username = '" + username + "' AND raw_password = '" + password + "'"
-      {% endif %}
-    </div>
-    <div style="display:flex; gap:10px;">
-      <a href="{{ url_for('login') }}" class="btn btn-outline" style="font-size: 12px;">Test on Login Page</a>
+
+    <div>
+      <label class="form-label">Live Execution Console & Telemetry</label>
+      <div id="sqliConsole" class="console-box">
+        <div>[System Ready] Select a payload and click 'Run Injection' to inspect query execution.</div>
+      </div>
     </div>
   </div>
+</div>
 
-  <!-- Concept 2: Password Guessing / Brute Force -->
-  <div class="glass-card">
-    <div class="card-header">
-      <h3 class="card-title">2. 🔑 Password Guessing & Rate Limiting</h3>
-      <span class="status-badge {% if session.get('security_mode') == 'SECURE' %}secure{% else %}vulnerable{% endif %}">
-        {% if session.get('security_mode') == 'SECURE' %}Account Lockout Enabled{% else %}Unlimited Retries{% endif %}
+<!-- 5 Security Vulnerability Cards Grid -->
+<div class="grid-2">
+
+  <!-- Concept 2: Password Guessing & Rate Limiting -->
+  <div class="enterprise-card">
+    <div class="card-top">
+      <h3 class="card-heading">
+        <svg class="icon-svg" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        2. Password Guessing & Audit Logging
+      </h3>
+      <span class="status-pill {% if session.get('security_mode') == 'SECURE' %}secure{% else %}vulnerable{% endif %}">
+        {% if session.get('security_mode') == 'SECURE' %}PROTECTED / AUDITED{% else %}EXPOSED / UNRESTRICTED{% endif %}
       </span>
     </div>
-    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
-      Automated credential stuffing or dictionary attacks guessing user passwords without restriction.
+    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 14px;">
+      Credential stuffing and dictionary attacks against portal authentication.
     </p>
-    <div style="background: rgba(0,0,0,0.3); padding: 12px; border-radius: var(--radius-sm); font-family: var(--font-mono); font-size: 12px; margin-bottom: 16px;">
+    <div style="background: var(--bg-input); padding: 10px; border-radius: var(--radius-sm); font-family: var(--font-mono); font-size: 12px; border: 1px solid var(--border-subtle); margin-bottom: 14px;">
       {% if session.get('security_mode') == 'SECURE' %}
-        <span style="color:#34d399;"># SECURE: Track failed attempts & lock account</span><br>
-        if user.failed_attempts >= 3: lock_account(user)
+        <span style="color:#34d399;">// SECURE: Password hash check & security audit logging</span><br>
+        check_password_hash(user.password_hash, input_pass)<br>
+        add_security_log("AUTH_LOGIN_FAIL", ip_address)
       {% else %}
-        <span style="color:#f87171;"># VULNERABLE: No rate limits or failed counter</span><br>
-        allow_unlimited_attempts()
+        <span style="color:#f43f5e;">// VULNERABLE: Direct evaluation without attempt restriction</span><br>
+        allow_unlimited_login_attempts()
       {% endif %}
     </div>
-    <div style="display:flex; gap:10px;">
-      <a href="{{ url_for('login') }}" class="btn btn-outline" style="font-size: 12px;">Test Brute Force</a>
-    </div>
+    <a href="{{ url_for('login') }}" class="btn btn-outline" style="font-size: 12px;">Test Login Authentication</a>
   </div>
 
   <!-- Concept 3: Stored XSS -->
-  <div class="glass-card">
-    <div class="card-header">
-      <h3 class="card-title">3. ☣️ Stored Cross-Site Scripting (XSS)</h3>
-      <span class="status-badge {% if session.get('security_mode') == 'SECURE' %}secure{% else %}vulnerable{% endif %}">
-        {% if session.get('security_mode') == 'SECURE' %}HTML Escaping Active{% else %}Unsanitized Output{% endif %}
+  <div class="enterprise-card">
+    <div class="card-top">
+      <h3 class="card-heading">
+        <svg class="icon-svg" viewBox="0 0 24 24"><path d="m18 16 4-4-4-4"/><path d="m6 8-4 4 4 4"/><path d="m14.5 4-5 16"/></svg>
+        3. Stored Cross-Site Scripting (XSS)
+      </h3>
+      <span class="status-pill {% if session.get('security_mode') == 'SECURE' %}secure{% else %}vulnerable{% endif %}">
+        {% if session.get('security_mode') == 'SECURE' %}BLOCKED / HTML ESCAPED{% else %}EXPOSED / UNENCODED SAFE{% endif %}
       </span>
     </div>
-    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
-      Malicious JavaScript scripts stored in support ticket messages rendered directly into victim browser session.
+    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 14px;">
+      Malicious JavaScript scripts stored in database support tickets rendered directly into victim browser session.
     </p>
-    <div style="background: rgba(0,0,0,0.3); padding: 12px; border-radius: var(--radius-sm); font-family: var(--font-mono); font-size: 12px; margin-bottom: 16px;">
+    <div style="background: var(--bg-input); padding: 10px; border-radius: var(--radius-sm); font-family: var(--font-mono); font-size: 12px; border: 1px solid var(--border-subtle); margin-bottom: 14px;">
       {% if session.get('security_mode') == 'SECURE' %}
-        <span style="color:#34d399;"># SECURE: Escape HTML characters</span><br>
+        <span style="color:#34d399;">// SECURE: Automatic HTML output encoding</span><br>
         {{ '{{ ticket.message }}' }}
       {% else %}
-        <span style="color:#f87171;"># VULNERABLE: Mark string as safe / raw innerHTML</span><br>
+        <span style="color:#f43f5e;">// VULNERABLE: Raw filter bypasses output encoding</span><br>
         {{ '{{ ticket.message | safe }}' }}
       {% endif %}
     </div>
-    <div style="display:flex; gap:10px;">
-      <a href="{{ url_for('tickets') }}" class="btn btn-outline" style="font-size: 12px;">Test Support Tickets</a>
-    </div>
+    <a href="{{ url_for('tickets') }}" class="btn btn-outline" style="font-size: 12px;">Test Support Desk Tickets</a>
   </div>
 
   <!-- Concept 4: Parameter Tampering -->
-  <div class="glass-card">
-    <div class="card-header">
-      <h3 class="card-title">4. 💵 Parameter Tampering</h3>
-      <span class="status-badge {% if session.get('security_mode') == 'SECURE' %}secure{% else %}vulnerable{% endif %}">
-        {% if session.get('security_mode') == 'SECURE' %}Server-side Price Validation{% else %}Client-side Price Trust{% endif %}
+  <div class="enterprise-card">
+    <div class="card-top">
+      <h3 class="card-heading">
+        <svg class="icon-svg" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        4. Parameter Tampering
+      </h3>
+      <span class="status-pill {% if session.get('security_mode') == 'SECURE' %}secure{% else %}vulnerable{% endif %}">
+        {% if session.get('security_mode') == 'SECURE' %}PROTECTED / SERVER CATALOG{% else %}EXPOSED / CLIENT TRUSTED{% endif %}
       </span>
     </div>
-    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
-      User manipulates form inputs or HTTP parameters (e.g. setting `price=0.00` for a $499 Enterprise plan).
+    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 14px;">
+      User manipulates form price values (`price=0.00`) during subscription plan upgrade checkout.
     </p>
-    <div style="background: rgba(0,0,0,0.3); padding: 12px; border-radius: var(--radius-sm); font-family: var(--font-mono); font-size: 12px; margin-bottom: 16px;">
+    <div style="background: var(--bg-input); padding: 10px; border-radius: var(--radius-sm); font-family: var(--font-mono); font-size: 12px; border: 1px solid var(--border-subtle); margin-bottom: 14px;">
       {% if session.get('security_mode') == 'SECURE' %}
-        <span style="color:#34d399;"># SECURE: Fetch official pricing from database catalog</span><br>
-        price = PLANS_CATALOG[plan_id].price
+        <span style="color:#34d399;">// SECURE: Server dictionary lookup</span><br>
+        price = SERVER_PLANS_CATALOG[plan_name].price
       {% else %}
-        <span style="color:#f87171;"># VULNERABLE: Accept user submitted price parameter</span><br>
+        <span style="color:#f43f5e;">// VULNERABLE: Direct trust of client parameter</span><br>
         price = request.form.get('price')
       {% endif %}
     </div>
-    <div style="display:flex; gap:10px;">
-      <a href="{{ url_for('subscriptions') }}" class="btn btn-outline" style="font-size: 12px;">Test Plan Checkout</a>
-    </div>
+    <a href="{{ url_for('subscriptions') }}" class="btn btn-outline" style="font-size: 12px;">Test Plan Subscriptions</a>
   </div>
 
   <!-- Concept 5: IDOR / URL Manipulation -->
-  <div class="glass-card">
-    <div class="card-header">
-      <h3 class="card-title">5. 🔗 URL Manipulation / IDOR</h3>
-      <span class="status-badge {% if session.get('security_mode') == 'SECURE' %}secure{% else %}vulnerable{% endif %}">
-        {% if session.get('security_mode') == 'SECURE' %}Access Control Authorization{% else %}No Ownership Verification{% endif %}
+  <div class="enterprise-card">
+    <div class="card-top">
+      <h3 class="card-heading">
+        <svg class="icon-svg" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+        5. URL Manipulation / IDOR
+      </h3>
+      <span class="status-pill {% if session.get('security_mode') == 'SECURE' %}secure{% else %}vulnerable{% endif %}">
+        {% if session.get('security_mode') == 'SECURE' %}PROTECTED / AUTHORIZED{% else %}EXPOSED / UNCHECKED ID{% endif %}
       </span>
     </div>
-    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
-      Attacker alters object ID in URL (`/invoice/1` -> `/invoice/2`) to view unauthorized sensitive records.
+    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 14px;">
+      Attacker alters statement ID in URL (`/invoice/1` -> `/invoice/2`) to view unauthorized sensitive records.
     </p>
-    <div style="background: rgba(0,0,0,0.3); padding: 12px; border-radius: var(--radius-sm); font-family: var(--font-mono); font-size: 12px; margin-bottom: 16px;">
+    <div style="background: var(--bg-input); padding: 10px; border-radius: var(--radius-sm); font-family: var(--font-mono); font-size: 12px; border: 1px solid var(--border-subtle); margin-bottom: 14px;">
       {% if session.get('security_mode') == 'SECURE' %}
-        <span style="color:#34d399;"># SECURE: Verify session user matches object owner</span><br>
-        if invoice.user_id != session['user_id']: return abort(403)
+        <span style="color:#34d399;">// SECURE: Enforce session user ownership check</span><br>
+        WHERE id = %s AND user_id = session.user_id
       {% else %}
-        <span style="color:#f87171;"># VULNERABLE: Fetch object directly by ID without check</span><br>
-        invoice = get_invoice(invoice_id)
+        <span style="color:#f43f5e;">// VULNERABLE: Direct primary key fetch without check</span><br>
+        WHERE id = %s
       {% endif %}
     </div>
-    <div style="display:flex; gap:10px;">
-      <a href="{{ url_for('invoices') }}" class="btn btn-outline" style="font-size: 12px;">Test Invoices</a>
-    </div>
+    <a href="{{ url_for('invoices') }}" class="btn btn-outline" style="font-size: 12px;">Test Invoice Statements</a>
   </div>
 
-  <!-- Concept 6: Phishing -->
-  <div class="glass-card">
-    <div class="card-header">
-      <h3 class="card-title">6. 🎣 Phishing Simulation</h3>
-      <span class="status-badge {% if session.get('security_mode') == 'SECURE' %}secure{% else %}vulnerable{% endif %}">
-        {% if session.get('security_mode') == 'SECURE' %}Domain & Security Warning Banner{% else %}Unaware User Interface{% endif %}
+  <!-- Concept 6: Phishing Simulation -->
+  <div class="enterprise-card">
+    <div class="card-top">
+      <h3 class="card-heading">
+        <svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><circle cx="12" cy="12" r="3"/></svg>
+        6. Phishing Simulation
+      </h3>
+      <span class="status-pill {% if session.get('security_mode') == 'SECURE' %}secure{% else %}vulnerable{% endif %}">
+        {% if session.get('security_mode') == 'SECURE' %}PROTECTED / ORIGIN GUARD{% else %}EXPOSED / UNWARNED DOMAIN{% endif %}
       </span>
     </div>
-    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
-      Simulated fake portal login page targeting CyberVault users to demonstrate spoofing awareness & defenses.
+    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 14px;">
+      Simulated fake portal login page targeting SaaSFlow users to demonstrate spoofing awareness & defenses.
     </p>
-    <div style="background: rgba(0,0,0,0.3); padding: 12px; border-radius: var(--radius-sm); font-family: var(--font-mono); font-size: 12px; margin-bottom: 16px;">
+    <div style="background: var(--bg-input); padding: 10px; border-radius: var(--radius-sm); font-family: var(--font-mono); font-size: 12px; border: 1px solid var(--border-subtle); margin-bottom: 14px;">
       {% if session.get('security_mode') == 'SECURE' %}
-        <span style="color:#34d399;"># SECURE: Visual domain confirmation & security banner</span><br>
-        check_domain_integrity() & show_origin_warning()
+        <span style="color:#34d399;">// SECURE: Origin integrity check & warning banner</span><br>
+        verify_origin_domain() -> show_alert_banner()
       {% else %}
-        <span style="color:#f87171;"># VULNERABLE: Spoofed URL looks authentic to unaware user</span><br>
-        http://cybervaault-security.local/login
+        <span style="color:#f43f5e;">// VULNERABLE: Unchecked lookalike domain URL</span><br>
+        http://saasflow-security.local/login
       {% endif %}
     </div>
-    <div style="display:flex; gap:10px;">
-      <a href="{{ url_for('phishing_demo') }}" class="btn btn-outline" style="font-size: 12px;">Launch Phishing Simulation</a>
-    </div>
+    <a href="{{ url_for('phishing_demo') }}" class="btn btn-outline" style="font-size: 12px;">Launch Phishing Simulation</a>
   </div>
 
 </div>
+
+<script>
+function setSqliPayload(payload) {
+  document.getElementById('sqliPayloadInput').value = payload;
+}
+
+async function executeSqliTest() {
+  const payload = document.getElementById('sqliPayloadInput').value;
+  const consoleBox = document.getElementById('sqliConsole');
+  
+  consoleBox.innerHTML = `<div>[Sending Request] Executing payload test...</div>`;
+
+  try {
+    const res = await fetch('/api/sqli-demo', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ payload: payload })
+    });
+    
+    const data = await res.json();
+    const timestamp = new Date().toLocaleTimeString();
+    
+    if (data.mode === 'VULNERABLE') {
+      let html = `<div style="color:#f43f5e;">[${timestamp}] MODE: VULNERABLE (Raw Concatenation)</div>`;
+      html += `<div style="color:var(--text-muted);">Query: <code>${data.executed_query}</code></div>`;
+      if (data.success) {
+        html += `<div style="color:#38bdf8;">Results Returned: ${data.result_count} record(s)</div>`;
+        html += `<div style="color:#9ca3af; margin-top:4px;">${data.explanation}</div>`;
+      } else {
+        html += `<div style="color:#f43f5e;">SQL Error: ${data.error}</div>`;
+      }
+      consoleBox.innerHTML = html;
+    } else {
+      let html = `<div style="color:#34d399;">[${timestamp}] MODE: SECURE / PROTECTED (Parameterized Prepared Statement)</div>`;
+      html += `<div style="color:var(--text-muted);">Query Template: <code>${data.executed_query}</code></div>`;
+      html += `<div style="color:#38bdf8;">Results Returned: ${data.result_count} record(s)</div>`;
+      html += `<div style="color:#9ca3af; margin-top:4px;">${data.explanation}</div>`;
+      consoleBox.innerHTML = html;
+    }
+  } catch (err) {
+    consoleBox.innerHTML = `<div style="color:#f43f5e;">Execution Error: ${err}</div>`;
+  }
+}
+</script>
 {% endblock %}

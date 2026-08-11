@@ -7,7 +7,7 @@ from db import init_db, seed_db, execute_param_sql_secure, execute_raw_sql_vulne
 load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = os.getenv("SECRET_KEY", "cybervault-secret-key-2026")
+app.secret_key = os.getenv("SECRET_KEY", "saasflow-secret-key-2026")
 
 # Initialize database schema and initial seed data on application start
 with app.app_context():
@@ -98,8 +98,8 @@ def register():
         if new_users:
             user_id = new_users[0]['id']
             # Create default free subscription
-            execute_param_sql_secure("INSERT INTO subscriptions (user_id, plan_name, price, status) VALUES (%s, 'CyberVault Free Starter', 0.00, 'active');", (user_id,))
-            execute_param_sql_secure("INSERT INTO invoices (user_id, amount, status, description) VALUES (%s, 0.00, 'paid', 'Free Plan Welcome Invoice #INV-NEW');", (user_id,))
+            execute_param_sql_secure("INSERT INTO subscriptions (user_id, plan_name, price, status) VALUES (%s, 'SaaSFlow Free Starter', 0.00, 'active');", (user_id,))
+            execute_param_sql_secure("INSERT INTO invoices (user_id, amount, status, description) VALUES (%s, 0.00, 'paid', 'Free Tier Welcome Invoice #INV-NEW');", (user_id,))
 
         add_security_log("USER_REGISTER", f"New user '{username}' registered", "SUCCESS")
         flash("Registration successful! Please login.", "success")
@@ -137,7 +137,10 @@ def dashboard():
     # Support Tickets
     tickets = execute_param_sql_secure("SELECT * FROM support_tickets WHERE user_id = %s ORDER BY id DESC;", (user_id,))
 
-    return render_template('dashboard.html', subscription=subscription, invoices=invoices, tickets=tickets)
+    # Recent Audit Logs for Dashboard
+    recent_logs = execute_param_sql_secure("SELECT * FROM security_logs ORDER BY id DESC LIMIT 5;")
+
+    return render_template('dashboard.html', subscription=subscription, invoices=invoices, tickets=tickets, recent_logs=recent_logs)
 
 @app.route('/subscriptions', methods=['GET', 'POST'])
 def subscriptions():
@@ -152,9 +155,9 @@ def subscriptions():
         mode = session.get('security_mode', 'VULNERABLE')
 
         PLANS = {
-            'CyberVault Free Starter': 0.00,
-            'CyberVault Pro Plan': 99.00,
-            'CyberVault Enterprise': 499.00
+            'SaaSFlow Free Starter': 0.00,
+            'SaaSFlow Pro Plan': 99.00,
+            'SaaSFlow Enterprise Security': 499.00
         }
 
         if mode == 'VULNERABLE':
@@ -200,18 +203,18 @@ def view_invoice(invoice_id):
         # IDOR / Broken Access Control Vulnerability: No ownership check!
         invoice_rows = execute_param_sql_secure("SELECT * FROM invoices WHERE id = %s;", (invoice_id,))
         if not invoice_rows:
-            flash("Invoice not found.", "danger")
+            flash("Invoice statement not found.", "danger")
             return redirect(url_for('invoices'))
         invoice = invoice_rows[0]
         if invoice['user_id'] != user_id:
             add_security_log("IDOR_EXPLOITED", f"User {user_id} accessed Invoice #{invoice_id} belonging to User {invoice['user_id']}", "EXPLOITED")
-            flash(f"⚠️ VULNERABLE DEMO: You accessed Invoice #{invoice_id} belonging to User ID {invoice['user_id']}!", "warning")
+            flash(f"VULNERABLE DEMO: Unrestricted access granted to Invoice #{invoice_id} belonging to User ID {invoice['user_id']}.", "warning")
     else:
         # SECURE MODE: Strict Authorization / Ownership Verification
         invoice_rows = execute_param_sql_secure("SELECT * FROM invoices WHERE id = %s AND user_id = %s;", (invoice_id, user_id))
         if not invoice_rows:
             add_security_log("IDOR_BLOCKED", f"User {user_id} blocked from unauthorized access to Invoice #{invoice_id}", "BLOCKED")
-            flash("Access Denied: You do not have permission to view this invoice statement.", "danger")
+            flash("Access Denied: You do not have authorization to view this invoice statement.", "danger")
             return redirect(url_for('invoices'))
         invoice = invoice_rows[0]
 
@@ -261,6 +264,12 @@ def security_logs():
 def phishing_demo():
     return render_template('phishing.html')
 
+@app.route('/settings')
+def settings():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    return render_template('settings.html')
+
 @app.route('/api/toggle-mode', methods=['POST'])
 def toggle_mode():
     data = request.get_json() or {}
@@ -295,7 +304,7 @@ def sqli_demo():
                 'executed_query': raw_query,
                 'results': results,
                 'result_count': len(results),
-                'explanation': "⚠️ VULNERABLE MODE: Input string was directly concatenated into the SQL command structure. Metacharacters like single quotes (') disrupted the query syntax, altering query logic."
+                'explanation': "VULNERABLE MODE: Input string was directly concatenated into the SQL statement. Metacharacters like single quotes (') disrupted syntax logic."
             })
         except Exception as e:
             add_security_log("SQLI_TEST_ERROR", f"SQLi raw query syntax error: {e}", "EXPLOITED")
@@ -304,7 +313,7 @@ def sqli_demo():
                 'mode': 'VULNERABLE',
                 'executed_query': raw_query,
                 'error': str(e),
-                'explanation': "⚠️ VULNERABLE MODE: Injected SQL payload caused a database operational/syntax error."
+                'explanation': "VULNERABLE MODE: Injected SQL payload caused a database syntax error."
             }), 400
     else:
         # SECURE MODE: Parameterized prepared statement
@@ -318,13 +327,12 @@ def sqli_demo():
                 'executed_query': f"SELECT id, username, email, raw_password, role FROM users WHERE username = ? [Bound Param: '{payload}']",
                 'results': results,
                 'result_count': len(results),
-                'explanation': "🛡️ SECURE MODE: The input payload was bound safely as a literal text parameter. SQL metacharacters were neutralized and could not alter query structure."
+                'explanation': "SECURE MODE: Input payload was safely bound as a literal string. SQL metacharacters were neutralized and could not alter query structure."
             })
         except Exception as e:
             return jsonify({'success': False, 'mode': 'SECURE', 'error': str(e)}), 400
 
-
 if __name__ == '__main__':
-    port = int(os.getenv("PORT", 5000))
-    print(f"🚀 Starting CyberVault Security Portal on http://127.0.0.1:{port}")
+    port = int(os.getenv("PORT", 5005))
+    print(f"🚀 Starting SaaSFlow Security Platform on http://127.0.0.1:{port}")
     app.run(host='0.0.0.0', port=port, debug=True)

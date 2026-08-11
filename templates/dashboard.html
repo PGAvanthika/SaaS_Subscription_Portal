@@ -1,70 +1,143 @@
 {% extends 'base.html' %}
 
-{% block title %}Dashboard - CyberVault Security Portal{% endblock %}
-{% block page_title %}SaaS Subscription Overview{% endblock %}
+{% block title %}Dashboard - SaaSFlow Enterprise Security{% endblock %}
+{% block page_title %}Security Posture & Operations Dashboard{% endblock %}
 
 {% block content %}
-<!-- Top Metrics Row -->
+<!-- Top Metrics Row: Security Posture, Active Subscription, Operating Mode -->
 <div class="grid-3">
-  <div class="glass-card">
-    <div class="card-header">
-      <span class="card-title">💳 Active Plan</span>
-      <span class="status-badge secure">Active</span>
-    </div>
-    <div style="font-size: 24px; font-weight: 800; color: var(--primary-cyan);">
-      {{ subscription.plan_name if subscription else 'Free Starter' }}
-    </div>
-    <div style="color: var(--text-muted); font-size: 13px; margin-top: 4px;">
-      Price: ${{ "%.2f"|format(subscription.price) if subscription else '0.00' }} / month
-    </div>
-  </div>
-
-  <div class="glass-card">
-    <div class="card-header">
-      <span class="card-title">📄 Invoices & Billing</span>
-      <span class="nav-icon">🧾</span>
-    </div>
-    <div style="font-size: 24px; font-weight: 800; color: #fff;">
-      {{ invoices|length }} Statement(s)
-    </div>
-    <div style="color: var(--text-muted); font-size: 13px; margin-top: 4px;">
-      Direct link IDOR demo ready
-    </div>
-  </div>
-
-  <div class="glass-card">
-    <div class="card-header">
-      <span class="card-title">🛡️ Security Status</span>
-      <span class="status-badge {% if session.get('security_mode') == 'SECURE' %}secure{% else %}vulnerable{% endif %}">
-        {{ session.get('security_mode', 'VULNERABLE') }}
+  <!-- Security Posture Card -->
+  <div class="enterprise-card">
+    <div class="card-top">
+      <span class="card-heading">
+        <svg class="icon-svg" viewBox="0 0 24 24" style="color:var(--accent-blue);"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+        Security Posture Score
+      </span>
+      <span class="status-pill {% if session.get('security_mode') == 'SECURE' %}secure{% else %}vulnerable{% endif %}">
+        {% if session.get('security_mode') == 'SECURE' %}HEALTHY (98/100){% else %}EXPOSED (35/100){% endif %}
       </span>
     </div>
-    <div style="font-size: 14px; color: var(--text-muted);">
-      {% if session.get('security_mode') == 'SECURE' %}
-        Input sanitization, parameterized queries, rate limits & authorization enforced.
-      {% else %}
-        Raw query concatenation, unescaped XSS output, & IDOR endpoints active.
-      {% endif %}
+    <div style="font-size: 26px; font-weight: 800; color: #fff; margin-bottom: 4px;">
+      {% if session.get('security_mode') == 'SECURE' %}Grade A+ (Protected){% else %}Grade F (Vulnerable){% endif %}
     </div>
+    <p style="color: var(--text-muted); font-size: 12.5px;">
+      {% if session.get('security_mode') == 'SECURE' %}
+        Parameterized SQL statements, HTML escaping, and context authorization active.
+      {% else %}
+        Raw query formatting, unescaped output, and broken access controls detected.
+      {% endif %}
+    </p>
+  </div>
+
+  <!-- Active Plan Card -->
+  <div class="enterprise-card">
+    <div class="card-top">
+      <span class="card-heading">
+        <svg class="icon-svg" viewBox="0 0 24 24" style="color:var(--accent-cyan);"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+        Active Subscription
+      </span>
+      <span class="status-pill secure">Active</span>
+    </div>
+    <div style="font-size: 22px; font-weight: 800; color: var(--accent-cyan); margin-bottom: 4px;">
+      {{ subscription.plan_name if subscription else 'SaaSFlow Free Starter' }}
+    </div>
+    <p style="color: var(--text-muted); font-size: 12.5px;">
+      Billing Rate: ${{ "%.2f"|format(subscription.price) if subscription else '0.00' }} / month
+    </p>
+  </div>
+
+  <!-- Audit Stream Activity Metric -->
+  <div class="enterprise-card">
+    <div class="card-top">
+      <span class="card-heading">
+        <svg class="icon-svg" viewBox="0 0 24 24" style="color:var(--text-main);"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Security Audit Telemetry
+      </span>
+      <span class="status-pill info">Live Logging</span>
+    </div>
+    <div style="font-size: 26px; font-weight: 800; color: #fff; margin-bottom: 4px;">
+      {{ recent_logs|length }} Event Stream(s)
+    </div>
+    <p style="color: var(--text-muted); font-size: 12.5px;">
+      Real-time event recording connected to Supabase audit trail.
+    </p>
   </div>
 </div>
 
-<!-- Main Sections Grid -->
+<!-- Main Section: Security Control Status Cards & Invoices -->
 <div class="grid-2">
-  <!-- Invoices Table (IDOR demonstration target) -->
-  <div class="glass-card">
-    <div class="card-header">
-      <h3 class="card-title">📄 Your Invoices</h3>
-      <a href="{{ url_for('invoices') }}" class="btn btn-outline" style="font-size: 12px; padding: 4px 10px;">View All</a>
+  <!-- Security Controls Overview Grid -->
+  <div class="enterprise-card">
+    <div class="card-top">
+      <h3 class="card-heading">
+        <svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Security Controls Matrix
+      </h3>
+      <a href="{{ url_for('security_lab') }}" class="btn btn-outline" style="font-size: 11px; padding: 4px 8px;">View Attack Lab</a>
     </div>
-    <div class="table-responsive">
-      <table class="custom-table">
+
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; background: var(--bg-input); padding: 10px 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+        <span style="font-size: 13px; font-weight: 600;">1. SQL Injection Defense</span>
+        <span class="status-pill {% if session.get('security_mode') == 'SECURE' %}secure{% else %}vulnerable{% endif %}">
+          {% if session.get('security_mode') == 'SECURE' %}Parameterized Binding{% else %}Raw Formatting{% endif %}
+        </span>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; background: var(--bg-input); padding: 10px 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+        <span style="font-size: 13px; font-weight: 600;">2. Password Guessing & Audit</span>
+        <span class="status-pill {% if session.get('security_mode') == 'SECURE' %}secure{% else %}vulnerable{% endif %}">
+          {% if session.get('security_mode') == 'SECURE' %}Audit Logging Enabled{% else %}Unrestricted Retries{% endif %}
+        </span>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; background: var(--bg-input); padding: 10px 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+        <span style="font-size: 13px; font-weight: 600;">3. Stored XSS Output Encoding</span>
+        <span class="status-pill {% if session.get('security_mode') == 'SECURE' %}secure{% else %}vulnerable{% endif %}">
+          {% if session.get('security_mode') == 'SECURE' %}Auto-Escaped HTML{% else %}Unescaped Raw Output{% endif %}
+        </span>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; background: var(--bg-input); padding: 10px 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+        <span style="font-size: 13px; font-weight: 600;">4. Parameter Price Validation</span>
+        <span class="status-pill {% if session.get('security_mode') == 'SECURE' %}secure{% else %}vulnerable{% endif %}">
+          {% if session.get('security_mode') == 'SECURE' %}Server Catalog Enforcement{% else %}Client Input Trusted{% endif %}
+        </span>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; background: var(--bg-input); padding: 10px 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+        <span style="font-size: 13px; font-weight: 600;">5. IDOR Object Authorization</span>
+        <span class="status-pill {% if session.get('security_mode') == 'SECURE' %}secure{% else %}vulnerable{% endif %}">
+          {% if session.get('security_mode') == 'SECURE' %}Session Ownership Verification{% else %}Unrestricted Object Access{% endif %}
+        </span>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; background: var(--bg-input); padding: 10px 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+        <span style="font-size: 13px; font-weight: 600;">6. Phishing Domain Verification</span>
+        <span class="status-pill {% if session.get('security_mode') == 'SECURE' %}secure{% else %}vulnerable{% endif %}">
+          {% if session.get('security_mode') == 'SECURE' %}Origin Warning Banner{% else %}Unprotected Spoofed Domain{% endif %}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Invoices & Statements Table -->
+  <div class="enterprise-card">
+    <div class="card-top">
+      <h3 class="card-heading">
+        <svg class="icon-svg" viewBox="0 0 24 24"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><line x1="16" y1="8" x2="8" y2="8"/><line x1="16" y1="12" x2="8" y2="12"/></svg>
+        Billing Statements
+      </h3>
+      <a href="{{ url_for('invoices') }}" class="btn btn-outline" style="font-size: 11px; padding: 4px 8px;">View All</a>
+    </div>
+
+    <div class="table-wrapper">
+      <table class="enterprise-table">
         <thead>
           <tr>
-            <th>Invoice ID</th>
+            <th>Statement ID</th>
             <th>Description</th>
             <th>Amount</th>
-            <th>Status</th>
             <th>Action</th>
           </tr>
         </thead>
@@ -75,53 +148,69 @@
               <td><code>#INV-{{ inv.id }}</code></td>
               <td>{{ inv.description }}</td>
               <td>${{ "%.2f"|format(inv.amount) }}</td>
-              <td><span class="status-badge secure">{{ inv.status }}</span></td>
               <td>
-                <a href="{{ url_for('view_invoice', invoice_id=inv.id) }}" class="btn btn-outline" style="padding: 4px 8px; font-size: 11px;">
-                  🔍 View Statement
+                <a href="{{ url_for('view_invoice', invoice_id=inv.id) }}" class="btn btn-outline" style="padding: 3px 8px; font-size: 11px;">
+                  Inspect
                 </a>
               </td>
             </tr>
             {% endfor %}
           {% else %}
             <tr>
-              <td colspan="5" style="text-align: center; color: var(--text-subtle);">No invoices found.</td>
+              <td colspan="4" style="text-align: center; color: var(--text-subtle);">No billing statements available.</td>
             </tr>
           {% endif %}
         </tbody>
       </table>
     </div>
   </div>
+</div>
 
-  <!-- Support Tickets (Stored XSS demonstration target) -->
-  <div class="glass-card">
-    <div class="card-header">
-      <h3 class="card-title">💬 Support Tickets</h3>
-      <a href="{{ url_for('tickets') }}" class="btn btn-outline" style="font-size: 12px; padding: 4px 10px;">New Ticket</a>
-    </div>
-    
-    <div>
-      {% if tickets %}
-        {% for t in tickets %}
-        <div style="background: rgba(0,0,0,0.3); border-radius: var(--radius-sm); padding: 12px; margin-bottom: 12px; border: 1px solid var(--border-color);">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-            <strong style="color: var(--primary-cyan); font-size: 14px;">{{ t.subject }}</strong>
-            <span class="status-badge secure">{{ t.status }}</span>
-          </div>
-          <!-- NOTE: In Vulnerable mode, message render demonstrates Stored XSS -->
-          <div style="font-size: 13px; color: var(--text-muted);">
-            {% if session.get('security_mode') == 'SECURE' %}
-              {{ t.message }}
-            {% else %}
-              {{ t.message|safe }}
-            {% endif %}
-          </div>
-        </div>
-        {% endfor %}
-      {% else %}
-        <p style="color: var(--text-subtle); text-align: center; padding: 20px;">No support tickets created yet.</p>
-      {% endif %}
-    </div>
+<!-- Recent Security Audit Log Telemetry Stream -->
+<div class="enterprise-card">
+  <div class="card-top">
+    <h3 class="card-heading">
+      <svg class="icon-svg" viewBox="0 0 24 24"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg>
+      Recent Security Audit Events
+    </h3>
+    <a href="{{ url_for('security_logs') }}" class="btn btn-outline" style="font-size: 11px; padding: 4px 8px;">View Audit Logs</a>
+  </div>
+
+  <div class="table-wrapper">
+    <table class="enterprise-table">
+      <thead>
+        <tr>
+          <th>Log ID</th>
+          <th>Event Code</th>
+          <th>Description</th>
+          <th>Result Status</th>
+          <th>Client IP</th>
+          <th>Timestamp</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if recent_logs %}
+          {% for log in recent_logs %}
+          <tr>
+            <td><code>#LOG-{{ log.id }}</code></td>
+            <td><strong style="color: var(--accent-cyan);">{{ log.event_type }}</strong></td>
+            <td>{{ log.description }}</td>
+            <td>
+              <span class="status-pill {% if 'VULN' in log.status or 'FAIL' in log.status or 'EXPLOITED' in log.status %}vulnerable{% else %}secure{% endif %}">
+                {{ log.status }}
+              </span>
+            </td>
+            <td><code>{{ log.ip_address }}</code></td>
+            <td>{{ log.created_at }}</td>
+          </tr>
+          {% endfor %}
+        {% else %}
+          <tr>
+            <td colspan="6" style="text-align: center; color: var(--text-subtle);">No recent audit events captured.</td>
+          </tr>
+        {% endif %}
+      </tbody>
+    </table>
   </div>
 </div>
 {% endblock %}

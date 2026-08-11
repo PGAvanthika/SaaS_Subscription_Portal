@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% block title %}CyberVault - SaaS Security Portal{% endblock %}</title>
+  <title>{% block title %}SaaSFlow - Enterprise SaaS Security Platform{% endblock %}</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
@@ -12,45 +12,63 @@
     <!-- Sidebar Navigation -->
     <aside class="sidebar">
       <div class="sidebar-header">
-        <div class="brand-icon">🛡️</div>
-        <div>
-          <div class="brand-text">CYBERVAULT</div>
+        <div class="brand-icon">
+          <svg class="icon-svg" viewBox="0 0 24 24" style="width:20px; height:20px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
         </div>
-        <span class="brand-tag">v1.0</span>
+        <div>
+          <div class="brand-text">SaaSFlow</div>
+        </div>
+        <span class="brand-tag">v2.0</span>
       </div>
 
       <nav class="sidebar-nav">
-        <div class="nav-label">Main Portal</div>
+        <div class="nav-section-title">Overview & Controls</div>
         <a href="{{ url_for('dashboard') }}" class="nav-item {% if request.path == url_for('dashboard') %}active{% endif %}">
-          <span class="nav-icon">📊</span> Dashboard
+          <svg class="icon-svg" viewBox="0 0 24 24"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+          Dashboard
         </a>
-        <a href="{{ url_for('subscriptions') }}" class="nav-item {% if request.path == url_for('subscriptions') %}active{% endif %}">
-          <span class="nav-icon">💳</span> Subscriptions
-        </a>
-        <a href="{{ url_for('invoices') }}" class="nav-item {% if request.path == url_for('invoices') %}active{% endif %}">
-          <span class="nav-icon">📄</span> Invoices & Billing
-        </a>
-        <a href="{{ url_for('tickets') }}" class="nav-item {% if request.path == url_for('tickets') %}active{% endif %}">
-          <span class="nav-icon">💬</span> Support Tickets
-        </a>
-
-        <div class="nav-label">Security Lab</div>
         <a href="{{ url_for('security_lab') }}" class="nav-item {% if request.path == url_for('security_lab') %}active{% endif %}">
-          <span class="nav-icon">🧪</span> Security Controls
+          <svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Security Controls
+        </a>
+        <a href="{{ url_for('security_lab') }}" class="nav-item">
+          <svg class="icon-svg" viewBox="0 0 24 24"><path d="M10 2v7.31"/><path d="M14 9.3V2"/><path d="M8.5 2h7"/><path d="M14 9.3a6.5 6.5 0 1 1-4 0"/></svg>
+          Attack Lab
         </a>
         <a href="{{ url_for('security_logs') }}" class="nav-item {% if request.path == url_for('security_logs') %}active{% endif %}">
-          <span class="nav-icon">📜</span> Audit Logs
+          <svg class="icon-svg" viewBox="0 0 24 24"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          Audit Logs
+        </a>
+
+        <div class="nav-section-title">Billing & Operations</div>
+        <a href="{{ url_for('subscriptions') }}" class="nav-item {% if request.path == url_for('subscriptions') %}active{% endif %}">
+          <svg class="icon-svg" viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+          Subscriptions
+        </a>
+        <a href="{{ url_for('invoices') }}" class="nav-item {% if request.path == url_for('invoices') %}active{% endif %}">
+          <svg class="icon-svg" viewBox="0 0 24 24"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><line x1="16" y1="8" x2="8" y2="8"/><line x1="16" y1="12" x2="8" y2="12"/><line x1="10" y1="16" x2="8" y2="16"/></svg>
+          Invoices
+        </a>
+        <a href="{{ url_for('tickets') }}" class="nav-item {% if request.path == url_for('tickets') %}active{% endif %}">
+          <svg class="icon-svg" viewBox="0 0 24 24"><path d="M79 20a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z"/><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Support Tickets
+        </a>
+        <a href="{{ url_for('settings') }}" class="nav-item {% if request.path == url_for('settings') %}active{% endif %}">
+          <svg class="icon-svg" viewBox="0 0 24 24"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.38a2 2 0 0 0-.73-2.73l-.15-.09a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+          Settings
         </a>
       </nav>
 
       <div class="sidebar-footer">
-        <div class="user-pill">
+        <div class="user-profile-pill">
           <div class="user-avatar">{{ session.get('username', 'U')[0]|upper }}</div>
-          <div class="user-info">
+          <div class="user-meta">
             <span class="user-name">{{ session.get('username') }}</span>
             <span class="user-role">{{ session.get('role', 'user')|capitalize }}</span>
           </div>
-          <a href="{{ url_for('logout') }}" style="margin-left:auto; font-size:16px;" title="Logout">🚪</a>
+          <a href="{{ url_for('logout') }}" style="margin-left:auto; color:var(--text-subtle);" title="Sign Out">
+            <svg class="icon-svg" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          </a>
         </div>
       </div>
     </aside>
@@ -59,18 +77,16 @@
     <!-- Main Workspace -->
     <main class="main-wrapper" {% if not session.get('user_id') %}style="margin-left:0;"{% endif %}>
       <header class="topbar">
-        <div class="page-title-group">
-          <h1 class="page-title">{% block page_title %}CyberVault Portal{% endblock %}</h1>
-        </div>
+        <h1 class="page-title">{% block page_title %}SaaSFlow Platform{% endblock %}</h1>
 
-        <div class="security-toggle-container">
-          <span class="toggle-label">Security Mode:</span>
-          <label class="toggle-switch">
+        <div class="security-control-panel">
+          <span class="toggle-caption">Platform Controls:</span>
+          <label class="switch-control">
             <input type="checkbox" id="securityModeToggle" {% if session.get('security_mode') == 'SECURE' %}checked{% endif %}>
-            <span class="slider"></span>
+            <span class="slider-track"></span>
           </label>
-          <span id="securityBadge" class="status-badge {% if session.get('security_mode') == 'SECURE' %}secure{% else %}vulnerable{% endif %}">
-            {% if session.get('security_mode') == 'SECURE' %}🛡️ SECURE MODE{% else %}⚠️ VULNERABLE MODE{% endif %}
+          <span id="securityBadge" class="status-pill {% if session.get('security_mode') == 'SECURE' %}secure{% else %}vulnerable{% endif %}">
+            {% if session.get('security_mode') == 'SECURE' %}PROTECTED{% else %}VULNERABLE{% endif %}
           </span>
         </div>
       </header>

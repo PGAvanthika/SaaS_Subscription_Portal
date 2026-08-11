@@ -82,7 +82,7 @@ def execute_param_sql_secure(query, params=()):
                 except Exception:
                     return []
         else:
-            # Convert %s or %()s placeholders for SQLite if needed
+            # Convert %s placeholders for SQLite if needed
             sqlite_query = query.replace("%s", "?")
             cur = conn.cursor()
             cur.execute(sqlite_query, params)
@@ -176,7 +176,7 @@ def init_db():
                     user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
                     amount REAL NOT NULL,
                     status TEXT DEFAULT 'paid',
-                    invoice_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    invoice_date TEXT DEFAULT CURRENT_TIMESTAMP,
                     description TEXT NOT NULL
                 );
 
@@ -217,11 +217,11 @@ def seed_db():
             user_count = cur.fetchone()[0]
 
         if user_count == 0:
-            print("[DB Seed] Seeding initial CyberVault demo users and records...")
+            print("[DB Seed] Seeding initial SaaSFlow demo users and records...")
             users = [
-                ('admin', 'admin@cybervault.local', generate_password_hash('AdminPass123!'), 'AdminPass123!', 'admin'),
-                ('alice', 'alice@cybervault.local', generate_password_hash('AliceSecret123!'), 'AliceSecret123!', 'user'),
-                ('bob', 'bob@cybervault.local', generate_password_hash('BobPassword456!'), 'BobPassword456!', 'user'),
+                ('admin', 'admin@saasflow.io', generate_password_hash('AdminPass123!'), 'AdminPass123!', 'admin'),
+                ('alice', 'alice@saasflow.io', generate_password_hash('AliceSecret123!'), 'AliceSecret123!', 'user'),
+                ('bob', 'bob@saasflow.io', generate_password_hash('BobPassword456!'), 'BobPassword456!', 'user'),
                 ('attacker', 'attacker@darknet.io', generate_password_hash('Hacker123!'), 'Hacker123!', 'user')
             ]
             
@@ -239,10 +239,10 @@ def seed_db():
 
             # Subscriptions
             subscriptions = [
-                (1, 'CyberVault Enterprise', 499.00, 'active'),
-                (2, 'CyberVault Pro Plan', 99.00, 'active'),
-                (3, 'CyberVault Free Starter', 0.00, 'active'),
-                (4, 'CyberVault Pro Plan', 99.00, 'active')
+                (1, 'SaaSFlow Enterprise Security', 499.00, 'active'),
+                (2, 'SaaSFlow Pro Plan', 99.00, 'active'),
+                (3, 'SaaSFlow Free Starter', 0.00, 'active'),
+                (4, 'SaaSFlow Pro Plan', 99.00, 'active')
             ]
             for s in subscriptions:
                 if db_type == "postgres":
@@ -258,10 +258,10 @@ def seed_db():
 
             # Invoices
             invoices = [
-                (1, 499.00, 'paid', 'Enterprise Annual License #INV-1001'),
-                (2, 99.00, 'paid', 'Pro Monthly Subscription #INV-1002'),
-                (3, 0.00, 'paid', 'Free Plan Initialization #INV-1003'),
-                (4, 99.00, 'unpaid', 'Pro Plan Monthly Renewal #INV-1004')
+                (1, 499.00, 'paid', 'Enterprise Annual Protection License #INV-1001'),
+                (2, 99.00, 'paid', 'Pro Monthly Security Subscription #INV-1002'),
+                (3, 0.00, 'paid', 'Free Tier Initialization Statement #INV-1003'),
+                (4, 99.00, 'unpaid', 'Pro Plan Monthly Renewal Statement #INV-1004')
             ]
             for inv in invoices:
                 if db_type == "postgres":
@@ -275,10 +275,10 @@ def seed_db():
                         inv
                     )
 
-            # Support tickets (including initial sample ticket)
+            # Support tickets
             tickets = [
-                (2, 'Upgrade Request', 'Hello Support, I would like to inquire about API access for Pro users.', 'open'),
-                (3, 'Password Reset Help', 'I am unable to reset my password using the standard portal link.', 'closed')
+                (2, 'API Security Inspection', 'Hello Support, I would like to request an API security token for the Pro tier.', 'open'),
+                (3, 'Password Reset Inquiry', 'I am unable to access password reset using standard portal workflow.', 'closed')
             ]
             for t in tickets:
                 if db_type == "postgres":
@@ -294,8 +294,8 @@ def seed_db():
 
             # Security Logs
             logs = [
-                ('SYSTEM_INIT', 'CyberVault Security Portal initialized', 'SUCCESS'),
-                ('AUTH_LOGIN', 'User admin logged in successfully from 127.0.0.1', 'SUCCESS')
+                ('SYSTEM_INIT', 'SaaSFlow Enterprise Platform initialized successfully', 'SUCCESS'),
+                ('AUTH_LOGIN', 'User admin authenticated from 127.0.0.1', 'SUCCESS')
             ]
             for l in logs:
                 if db_type == "postgres":

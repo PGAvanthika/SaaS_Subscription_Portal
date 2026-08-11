@@ -1,24 +1,27 @@
 {% extends 'base.html' %}
 
-{% block title %}Security Audit Logs - CyberVault{% endblock %}
-{% block page_title %}Security Audit Logs{% endblock %}
+{% block title %}Audit Logs - SaaSFlow Enterprise Security{% endblock %}
+{% block page_title %}Security Audit Telemetry Stream{% endblock %}
 
 {% block content %}
-<div class="glass-card">
-  <div class="card-header">
-    <h3 class="card-title">📜 Security Audit Log Stream</h3>
-    <span class="status-badge secure">Live Audit Trail</span>
+<div class="enterprise-card">
+  <div class="card-top">
+    <h3 class="card-heading">
+      <svg class="icon-svg" viewBox="0 0 24 24"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      Security Audit Telemetry Table
+    </h3>
+    <span class="status-pill secure">Real-time Stream</span>
   </div>
 
-  <div class="table-responsive">
-    <table class="custom-table">
+  <div class="table-wrapper">
+    <table class="enterprise-table">
       <thead>
         <tr>
           <th>Log ID</th>
-          <th>Event Type</th>
-          <th>Description</th>
+          <th>Event Code</th>
+          <th>Event Description</th>
           <th>Status</th>
-          <th>IP Address</th>
+          <th>Source IP</th>
           <th>Timestamp</th>
         </tr>
       </thead>
@@ -27,10 +30,10 @@
           {% for log in logs %}
           <tr>
             <td><code>#LOG-{{ log.id }}</code></td>
-            <td><strong style="color: var(--primary-cyan);">{{ log.event_type }}</strong></td>
+            <td><strong style="color: var(--accent-cyan);">{{ log.event_type }}</strong></td>
             <td>{{ log.description }}</td>
             <td>
-              <span class="status-badge {% if 'VULN' in log.status or 'FAIL' in log.status or 'EXPLOITED' in log.status %}vulnerable{% else %}secure{% endif %}">
+              <span class="status-pill {% if 'VULN' in log.status or 'FAIL' in log.status or 'EXPLOITED' in log.status %}vulnerable{% else %}secure{% endif %}">
                 {{ log.status }}
               </span>
             </td>
@@ -40,7 +43,7 @@
           {% endfor %}
         {% else %}
           <tr>
-            <td colspan="6" style="text-align: center; color: var(--text-subtle);">No security logs recorded yet.</td>
+            <td colspan="6" style="text-align: center; color: var(--text-subtle);">No security telemetry events recorded.</td>
           </tr>
         {% endif %}
       </tbody>

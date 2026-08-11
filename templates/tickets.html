@@ -1,59 +1,64 @@
 {% extends 'base.html' %}
 
-{% block title %}Support Tickets - CyberVault{% endblock %}
-{% block page_title %}Support Desk & Ticket Center{% endblock %}
+{% block title %}Support Tickets - SaaSFlow Enterprise Security{% endblock %}
+{% block page_title %}Support Desk & Ticket Operations{% endblock %}
 
 {% block content %}
 <div class="grid-2">
 
-  <!-- Create Support Ticket Form -->
-  <div class="glass-card">
-    <div class="card-header">
-      <h3 class="card-title">💬 Create New Support Ticket</h3>
-      <span class="status-badge {% if session.get('security_mode') == 'SECURE' %}secure{% else %}vulnerable{% endif %}">
-        {% if session.get('security_mode') == 'SECURE' %}Auto-escaped HTML{% else %}Stored XSS Target{% endif %}
+  <!-- Ticket Form -->
+  <div class="enterprise-card">
+    <div class="card-top">
+      <h3 class="card-heading">
+        <svg class="icon-svg" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Submit Support Inquiry
+      </h3>
+      <span class="status-pill {% if session.get('security_mode') == 'SECURE' %}secure{% else %}vulnerable{% endif %}">
+        {% if session.get('security_mode') == 'SECURE' %}AUTO-ESCAPED HTML{% else %}STORED XSS TARGET{% endif %}
       </span>
     </div>
 
     {% if session.get('security_mode') == 'VULNERABLE' %}
-    <div style="background: var(--vuln-red-bg); border: 1px solid var(--vuln-red-border); padding: 10px; border-radius: var(--radius-sm); margin-bottom: 16px; font-size: 12px;">
-      ⚠️ <strong>Stored XSS Demonstration:</strong> In Vulnerable mode, ticket messages are rendered raw (using <code>| safe</code>). Try submitting a script tag payload like:<br>
-      <code>&lt;script&gt;alert('Stored XSS Triggered on CyberVault!')&lt;/script&gt;</code> or <code>&lt;img src=x onerror="alert('XSS Payload Exuted!')"&gt;</code>
+    <div style="background: var(--status-vuln-bg); border: 1px solid var(--status-vuln-border); padding: 10px; border-radius: var(--radius-sm); margin-bottom: 16px; font-size: 12px; color: #f43f5e;">
+      <strong>Stored XSS Demonstration:</strong> In Vulnerable mode, ticket messages render raw output via <code>| safe</code>. Injected script tags (e.g. <code>&lt;img src=x onerror="alert('Stored XSS')"></code>) execute inside the browser context.
     </div>
     {% endif %}
 
     <form action="{{ url_for('tickets') }}" method="POST">
       <div class="form-group">
-        <label class="form-label">Subject</label>
-        <input type="text" name="subject" class="form-control" placeholder="e.g. Upgrade Assistance" required>
+        <label class="form-label">Subject Line</label>
+        <input type="text" name="subject" class="form-control" placeholder="e.g. Subscription Upgrade Inquiry" required>
       </div>
 
       <div class="form-group">
-        <label class="form-label">Ticket Message</label>
-        <textarea name="message" class="form-control" rows="5" placeholder="Describe your issue or enter test payload..." required></textarea>
+        <label class="form-label">Message Content</label>
+        <textarea name="message" class="form-control" rows="5" placeholder="Enter inquiry message or test payload..." required></textarea>
       </div>
 
       <button type="submit" class="btn btn-primary" style="width: 100%;">Submit Ticket</button>
     </form>
   </div>
 
-  <!-- Tickets List -->
-  <div class="glass-card">
-    <div class="card-header">
-      <h3 class="card-title">📜 Support Ticket Records</h3>
+  <!-- Ticket Stream -->
+  <div class="enterprise-card">
+    <div class="card-top">
+      <h3 class="card-heading">
+        <svg class="icon-svg" viewBox="0 0 24 24"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Ticket History Stream
+      </h3>
     </div>
 
     <div>
       {% if tickets %}
         {% for t in tickets %}
-        <div style="background: rgba(0,0,0,0.3); border-radius: var(--radius-sm); padding: 14px; margin-bottom: 14px; border: 1px solid var(--border-color);">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-            <strong style="color: var(--primary-cyan); font-size: 15px;">{{ t.subject }}</strong>
-            <span class="status-badge secure">{{ t.status }}</span>
+        <div style="background: var(--bg-input); border-radius: var(--radius-sm); padding: 12px; margin-bottom: 12px; border: 1px solid var(--border-subtle);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <strong style="color: var(--accent-cyan); font-size: 14px;">{{ t.subject }}</strong>
+            <span class="status-pill secure">{{ t.status }}</span>
           </div>
 
           <!-- Demonstrates Stored XSS -->
-          <div style="font-size: 13px; color: var(--text-main); background: rgba(255,255,255,0.03); padding: 10px; border-radius: 6px; border: 1px dashed var(--border-color);">
+          <div style="font-size: 13px; color: var(--text-main); background: rgba(255,255,255,0.02); padding: 8px 10px; border-radius: 4px; border: 1px dashed var(--border-subtle);">
             {% if session.get('security_mode') == 'SECURE' %}
               {{ t.message }}
             {% else %}
@@ -66,7 +71,7 @@
         </div>
         {% endfor %}
       {% else %}
-        <p style="color: var(--text-subtle); text-align: center; padding: 20px;">No support tickets found.</p>
+        <p style="color: var(--text-subtle); text-align: center; padding: 20px;">No support tickets recorded.</p>
       {% endif %}
     </div>
   </div>

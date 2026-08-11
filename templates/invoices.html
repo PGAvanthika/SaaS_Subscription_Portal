@@ -1,29 +1,32 @@
 {% extends 'base.html' %}
 
-{% block title %}Invoices - CyberVault{% endblock %}
-{% block page_title %}Invoices & Statements{% endblock %}
+{% block title %}Invoices - SaaSFlow Enterprise Security{% endblock %}
+{% block page_title %}Billing & Invoice Statements{% endblock %}
 
 {% block content %}
-<div class="glass-card">
-  <div class="card-header">
-    <h3 class="card-title">📄 All Subscription Invoices</h3>
-    <span class="status-badge {% if session.get('security_mode') == 'SECURE' %}secure{% else %}vulnerable{% endif %}">
-      {% if session.get('security_mode') == 'SECURE' %}IDOR Check Enforced{% else %}IDOR Target Active{% endif %}
+<div class="enterprise-card">
+  <div class="card-top">
+    <h3 class="card-heading">
+      <svg class="icon-svg" viewBox="0 0 24 24"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><line x1="16" y1="8" x2="8" y2="8"/><line x1="16" y1="12" x2="8" y2="12"/></svg>
+      All Account Statements
+    </h3>
+    <span class="status-pill {% if session.get('security_mode') == 'SECURE' %}secure{% else %}vulnerable{% endif %}">
+      {% if session.get('security_mode') == 'SECURE' %}AUTHORIZATION ENFORCED{% else %}IDOR TARGET ACTIVE{% endif %}
     </span>
   </div>
 
   {% if session.get('security_mode') == 'VULNERABLE' %}
-  <div style="background: var(--vuln-red-bg); border: 1px solid var(--vuln-red-border); padding: 12px; border-radius: var(--radius-sm); margin-bottom: 20px; font-size: 13px;">
-    <strong>⚠️ URL Manipulation / IDOR Demonstration:</strong><br>
-    Try modifying the invoice ID in the URL bar (e.g. changing <code>/invoice/{{ invoices[0].id if invoices else '1' }}</code> to <code>/invoice/1</code>, <code>/invoice/2</code>, etc.). In Vulnerable mode, any user can view any other user's invoice details!
+  <div style="background: var(--status-vuln-bg); border: 1px solid var(--status-vuln-border); padding: 12px; border-radius: var(--radius-sm); margin-bottom: 20px; font-size: 13px; color: #f43f5e;">
+    <strong>URL Manipulation / IDOR Vulnerability Demo:</strong><br>
+    Modify the invoice ID in the URL bar (e.g. changing <code>/invoice/{{ invoices[0].id if invoices else '1' }}</code> to <code>/invoice/1</code>, <code>/invoice/2</code>, etc.). In Vulnerable mode, any authenticated user can view any other user's billing statements without restriction.
   </div>
   {% endif %}
 
-  <div class="table-responsive">
-    <table class="custom-table">
+  <div class="table-wrapper">
+    <table class="enterprise-table">
       <thead>
         <tr>
-          <th>Invoice ID</th>
+          <th>Statement ID</th>
           <th>Description</th>
           <th>Amount</th>
           <th>Date</th>
@@ -39,17 +42,17 @@
             <td>{{ inv.description }}</td>
             <td>${{ "%.2f"|format(inv.amount) }}</td>
             <td>{{ inv.invoice_date }}</td>
-            <td><span class="status-badge secure">{{ inv.status }}</span></td>
+            <td><span class="status-pill secure">{{ inv.status }}</span></td>
             <td>
               <a href="{{ url_for('view_invoice', invoice_id=inv.id) }}" class="btn btn-outline" style="font-size: 11px; padding: 4px 8px;">
-                🔍 View PDF Statement
+                Inspect Statement
               </a>
             </td>
           </tr>
           {% endfor %}
         {% else %}
           <tr>
-            <td colspan="6" style="text-align: center; color: var(--text-subtle);">No invoices found for this account.</td>
+            <td colspan="6" style="text-align: center; color: var(--text-subtle);">No invoice statements found for this account.</td>
           </tr>
         {% endif %}
       </tbody>

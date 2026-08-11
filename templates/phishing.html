@@ -1,61 +1,66 @@
 {% extends 'base.html' %}
 
-{% block title %}Phishing Simulation - CyberVault{% endblock %}
-{% block page_title %}Phishing Attack & Spoofing Demonstration{% endblock %}
+{% block title %}Phishing Simulation - SaaSFlow Security{% endblock %}
+{% block page_title %}Phishing Threat & Origin Verification Simulation{% endblock %}
 
 {% block content %}
-<div class="glass-card" style="margin-bottom: 24px;">
-  <div class="card-header">
-    <h3 class="card-title">🎣 Phishing Simulation Lab</h3>
-    <span class="status-badge {% if session.get('security_mode') == 'SECURE' %}secure{% else %}vulnerable{% endif %}">
-      {% if session.get('security_mode') == 'SECURE' %}Origin Warning Enabled{% else %}Unprotected Spoofed Interface{% endif %}
+<div class="enterprise-card" style="margin-bottom: 24px;">
+  <div class="card-top">
+    <h3 class="card-heading">
+      <svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><circle cx="12" cy="12" r="3"/></svg>
+      Phishing Simulation & Origin Protection Laboratory
+    </h3>
+    <span class="status-pill {% if session.get('security_mode') == 'SECURE' %}secure{% else %}vulnerable{% endif %}">
+      {% if session.get('security_mode') == 'SECURE' %}ORIGIN GUARD ENABLED{% else %}UNPROTECTED SPOOFED DOMAIN{% endif %}
     </span>
   </div>
-  <p style="font-size: 14px; color: var(--text-muted);">
-    This module simulates how malicious actors craft visually identical login portals on lookalike domain names (e.g. <code>cybervaault-security.local</code> vs <code>cybervault.local</code>) to harvest credentials.
+  <p style="font-size: 13px; color: var(--text-muted);">
+    Demonstrating social engineering attacks where malicious actors host lookalike portals on deceptive domains (e.g. <code>saasflow-security.local</code> vs <code>saasflow.io</code>) to harvest enterprise credentials.
   </p>
 </div>
 
 {% if session.get('security_mode') == 'SECURE' %}
 <!-- SECURE MODE DEFENSE BANNER -->
-<div style="background: rgba(239, 68, 68, 0.2); border: 2px solid #ef4444; border-radius: var(--radius-md); padding: 16px 24px; margin-bottom: 24px; display: flex; align-items: center; gap: 16px;">
-  <div style="font-size: 32px;">⚠️</div>
+<div style="background: rgba(244, 63, 94, 0.15); border: 1px solid rgba(244, 63, 94, 0.4); border-radius: var(--radius-md); padding: 16px 20px; margin-bottom: 24px; display: flex; align-items: center; gap: 14px;">
+  <svg class="icon-svg" viewBox="0 0 24 24" style="width:28px; height:28px; color:#f43f5e; flex-shrink:0;"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
   <div>
-    <h4 style="color: #ef4444; font-size: 16px; font-weight: 800;">SECURITY ALERT: UNTRUSTED DOMAIN DETECTED</h4>
-    <p style="font-size: 13px; color: #f8fafc; margin-top: 2px;">
-      CyberVault Browser Guard detected that this page is operating on a suspicious origin (<code>cybervaault-security.local</code>). Never enter your password on untrusted domains!
+    <h4 style="color: #f43f5e; font-size: 14px; font-weight: 700;">SECURITY ALERT: UNTRUSTED DOMAIN ORIGIN DETECTED</h4>
+    <p style="font-size: 12.5px; color: var(--text-main); margin-top: 2px;">
+      SaaSFlow Origin Guard detected that this form is executing on a suspicious domain origin (<code>saasflow-security.local</code>). Never enter portal credentials on unverified domain origins.
     </p>
   </div>
 </div>
 {% endif %}
 
 <!-- Simulated Spoofed Login Card -->
-<div style="max-width: 460px; margin: 0 auto;">
-  <div class="glass-card" style="border: 2px dashed {% if session.get('security_mode') == 'SECURE' %}#ef4444{% else %}var(--border-color){% endif %};">
+<div style="max-width: 440px; margin: 0 auto;">
+  <div class="enterprise-card" style="border: 2px dashed {% if session.get('security_mode') == 'SECURE' %}#f43f5e{% else %}var(--border-subtle){% endif %};">
     <div style="text-align: center; margin-bottom: 20px;">
-      <div style="font-size: 11px; background: #ef4444; color:#fff; font-weight:800; padding: 2px 8px; border-radius:4px; display:inline-block; margin-bottom: 12px;">SIMULATED PHISHING LANDING PAGE</div>
-      <div class="brand-icon" style="margin: 0 auto 12px auto; width: 44px; height: 44px; font-size: 22px;">🛡️</div>
-      <h3 style="font-size: 18px; font-weight: 700;">CyberVault Password Verification</h3>
-      <p style="font-size: 12px; color: var(--text-subtle);">URGENT: Re-authenticate to prevent account suspension!</p>
+      <div style="font-size: 10px; background: rgba(244, 63, 94, 0.2); color:#f43f5e; font-weight:700; padding: 2px 8px; border-radius:4px; display:inline-block; margin-bottom: 10px; border: 1px solid rgba(244, 63, 94, 0.3);">SIMULATED PHISHING LANDING PAGE</div>
+      <div class="brand-icon" style="margin: 0 auto 10px auto; width: 40px; height: 40px;">
+        <svg class="icon-svg" viewBox="0 0 24 24" style="width:20px; height:20px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+      </div>
+      <h3 style="font-size: 17px; font-weight: 700;">SaaSFlow Account Re-verification</h3>
+      <p style="font-size: 12px; color: var(--text-subtle);">Re-authenticate to prevent suspension</p>
     </div>
 
     <form onsubmit="event.preventDefault(); simulatePhishHarvest();">
       <div class="form-group">
-        <label class="form-label">Email / Username</label>
+        <label class="form-label">Email Address</label>
         <input type="text" id="phishUser" class="form-control" placeholder="user@company.com" required>
       </div>
 
       <div class="form-group">
-        <label class="form-label">Account Password</label>
-        <input type="password" id="phishPass" class="form-control" placeholder="Enter password" required>
+        <label class="form-label">Password</label>
+        <input type="password" id="phishPass" class="form-control" placeholder="Enter account password" required>
       </div>
 
-      <button type="submit" class="btn btn-vuln" style="width: 100%;">
-        🚨 Verify & Continue
+      <button type="submit" class="btn btn-danger" style="width: 100%;">
+        Verify Account Credentials
       </button>
     </form>
 
-    <div id="phishOutput" style="margin-top: 16px; font-size: 13px; padding: 10px; border-radius: 6px; display: none;"></div>
+    <div id="phishOutput" style="margin-top: 14px; font-size: 12.5px; padding: 10px; border-radius: 6px; display: none;"></div>
   </div>
 </div>
 
@@ -66,10 +71,10 @@ function simulatePhishHarvest() {
   const out = document.getElementById('phishOutput');
   
   out.style.display = 'block';
-  out.style.background = 'rgba(239, 68, 68, 0.2)';
-  out.style.border = '1px solid #ef4444';
-  out.style.color = '#ef4444';
-  out.innerHTML = `<strong>⚠️ PHISHING DEMO RESULT:</strong><br>Credential harvested by fake server! Username: <code>${u}</code>, Password: <code>${p}</code>.<br><br><em>In real-world attacks, credentials are transmitted to attacker-controlled C2 servers. Always verify website domain URLs!</em>`;
+  out.style.background = 'rgba(244, 63, 94, 0.15)';
+  out.style.border = '1px solid rgba(244, 63, 94, 0.3)';
+  out.style.color = '#f43f5e';
+  out.innerHTML = `<strong>PHISHING SIMULATION RESULT:</strong><br>Credentials intercepted by fake endpoint! User: <code>${u}</code>, Password: <code>${p}</code>.<br><br><em>Always verify domain URL certificates in the browser address bar!</em>`;
 }
 </script>
 {% endblock %}
