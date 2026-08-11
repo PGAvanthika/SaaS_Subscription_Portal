@@ -271,6 +271,59 @@ def toggle_mode():
         return jsonify({'success': True, 'mode': new_mode})
     return jsonify({'success': False, 'error': 'Invalid mode'}), 400
 
+@app.route('/api/sqli-demo', methods=['POST'])
+def sqli_demo():
+    """
+    Interactive API for SQL Injection testing.
+    Executes raw string query in VULNERABLE mode or parameterized query in SECURE mode.
+    """
+    data = request.get_json() or {}
+    payload = data.get('payload', '').strip()
+    mode = session.get('security_mode', 'VULNERABLE')
+
+    if not payload:
+        payload = "' OR '1'='1"
+
+    if mode == 'VULNERABLE':
+        raw_query = f"SELECT id, username, email, raw_password, role FROM users WHERE username = '{payload}';"
+        try:
+            results = execute_raw_sql_vulnerable(raw_query)
+            add_security_log("SQLI_TEST_VULN", f"SQLi payload executed via raw query: {payload}", "EXPLOITED")
+            return jsonify({
+                'success': True,
+                'mode': 'VULNERABLE',
+                'executed_query': raw_query,
+                'results': results,
+                'result_count': len(results),
+                'explanation': "⚠️ VULNERABLE MODE: Input string was directly concatenated into the SQL command structure. Metacharacters like single quotes (') disrupted the query syntax, altering query logic."
+            })
+        except Exception as e:
+            add_security_log("SQLI_TEST_ERROR", f"SQLi raw query syntax error: {e}", "EXPLOITED")
+            return jsonify({
+                'success': False,
+                'mode': 'VULNERABLE',
+                'executed_query': raw_query,
+                'error': str(e),
+                'explanation': "⚠️ VULNERABLE MODE: Injected SQL payload caused a database operational/syntax error."
+            }), 400
+    else:
+        # SECURE MODE: Parameterized prepared statement
+        secure_query = "SELECT id, username, email, raw_password, role FROM users WHERE username = %s;"
+        try:
+            results = execute_param_sql_secure(secure_query, (payload,))
+            add_security_log("SQLI_TEST_SECURE", f"SQLi payload safely bound via parameter: {payload}", "BLOCKED")
+            return jsonify({
+                'success': True,
+                'mode': 'SECURE',
+                'executed_query': f"SELECT id, username, email, raw_password, role FROM users WHERE username = ? [Bound Param: '{payload}']",
+                'results': results,
+                'result_count': len(results),
+                'explanation': "🛡️ SECURE MODE: The input payload was bound safely as a literal text parameter. SQL metacharacters were neutralized and could not alter query structure."
+            })
+        except Exception as e:
+            return jsonify({'success': False, 'mode': 'SECURE', 'error': str(e)}), 400
+
+
 if __name__ == '__main__':
     port = int(os.getenv("PORT", 5000))
     print(f"🚀 Starting CyberVault Security Portal on http://127.0.0.1:{port}")

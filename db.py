@@ -10,7 +10,8 @@ load_dotenv()
 DATABASE_URL = os.getenv("DATABASE_URL", "").strip()
 
 def is_postgres():
-    return bool(DATABASE_URL and DATABASE_URL.startswith("postgresql://"))
+    url = os.getenv("DATABASE_URL", "").strip()
+    return bool(url and (url.startswith("postgresql://") or url.startswith("postgres://")))
 
 def get_db_connection():
     """
@@ -18,9 +19,17 @@ def get_db_connection():
     otherwise falls back to a local SQLite database connection.
     Both return dictionary-like row results.
     """
+    load_dotenv(override=True)
+    db_url = os.getenv("DATABASE_URL", "").strip()
+
     if is_postgres():
         try:
-            conn = psycopg.connect(DATABASE_URL, row_factory=dict_row)
+            # Append sslmode=require if not present for Supabase PostgreSQL
+            connect_url = db_url
+            if "sslmode=" not in connect_url:
+                connect_url += ("&sslmode=require" if "?" in connect_url else "?sslmode=require")
+
+            conn = psycopg.connect(connect_url, row_factory=dict_row)
             return conn, "postgres"
         except Exception as e:
             print(f"[DB Warning] Could not connect to Supabase PostgreSQL: {e}. Falling back to SQLite.")
