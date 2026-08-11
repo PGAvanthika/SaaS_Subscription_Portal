@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}Login - CyberVault{% endblock %}
+{% block page_title %}Sign In to CyberVault{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+  <div class="glass-card auth-card">
+    <div style="text-align: center; margin-bottom: 24px;">
+      <div class="brand-icon" style="margin: 0 auto 16px auto; width: 50px; height: 50px; font-size: 26px;">🛡️</div>
+      <h2 style="font-size: 22px; font-weight: 700;">CyberVault Security Portal</h2>
+      <p style="color: var(--text-muted); font-size: 13px; margin-top: 4px;">Interactive SaaS Security Demonstration Application</p>
+    </div>
+
+    <form action="{{ url_for('login') }}" method="POST">
+      <div class="form-group">
+        <label class="form-label">Username or Email</label>
+        <input type="text" name="username" id="loginUsername" class="form-control" placeholder="Enter username (e.g. alice)" required autocomplete="off">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input type="password" name="password" id="loginPassword" class="form-control" placeholder="Enter password" required>
+      </div>
+
+      <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">
+        🔑 Sign In
+      </button>
+    </form>
+
+    <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border-color);">
+      <p style="font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 10px;">⚡ QUICK TEST ACCOUNTS (Click to fill):</p>
+      <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+        <button type="button" class="btn btn-outline" style="font-size: 12px; padding: 6px 12px;" onclick="fillDemo('alice', 'AliceSecret123!')">👩 Alice (Pro User)</button>
+        <button type="button" class="btn btn-outline" style="font-size: 12px; padding: 6px 12px;" onclick="fillDemo('bob', 'BobPassword456!')">👨 Bob (Free User)</button>
+        <button type="button" class="btn btn-outline" style="font-size: 12px; padding: 6px 12px;" onclick="fillDemo('admin', 'AdminPass123!')">👑 Admin</button>
+        <button type="button" class="btn btn-outline" style="font-size: 12px; padding: 6px 12px;" onclick="fillDemo('admin\' --', 'any')">💉 SQLi Login Payload</button>
+      </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 20px; font-size: 13px; color: var(--text-muted);">
+      Don't have an account? <a href="{{ url_for('register') }}">Register here</a>
+    </div>
+  </div>
+</div>
+
+<script>
+function fillDemo(user, pass) {
+  document.getElementById('loginUsername').value = user;
+  document.getElementById('loginPassword').value = pass;
+}
+</script>
+{% endblock %}

@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block title %}Invoice #INV-{{ invoice.id }} - CyberVault{% endblock %}
+{% block page_title %}Invoice Statement Detail{% endblock %}
+
+{% block content %}
+<div style="max-width: 700px; margin: 0 auto;">
+
+  <div class="glass-card" style="padding: 36px; border: 1px solid var(--border-glow);">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 32px; border-bottom: 1px solid var(--border-color); padding-bottom: 24px;">
+      <div>
+        <div class="brand-icon" style="width: 44px; height: 44px; font-size: 22px; margin-bottom: 8px;">🛡️</div>
+        <h2 style="font-size: 20px; font-weight: 800;">CYBERVAULT SAAS</h2>
+        <p style="font-size: 12px; color: var(--text-subtle);">CyberVault Enterprise Security Portal</p>
+      </div>
+
+      <div style="text-align: right;">
+        <h3 style="font-size: 18px; font-weight: 700; color: var(--primary-cyan);">INVOICE STATEMENT</h3>
+        <p style="font-size: 14px; font-weight: 600; color: #fff; margin-top: 4px;">#INV-{{ invoice.id }}</p>
+        <span class="status-badge secure" style="margin-top: 8px;">STATUS: {{ invoice.status|upper }}</span>
+      </div>
+    </div>
+
+    <!-- Owner & Customer Information -->
+    <div class="grid-2" style="margin-bottom: 28px;">
+      <div>
+        <div style="font-size: 11px; font-weight: 700; color: var(--text-subtle); text-transform: uppercase;">Billed To:</div>
+        <div style="font-size: 15px; font-weight: 700; color: #fff; margin-top: 4px;">{{ owner.username }}</div>
+        <div style="font-size: 13px; color: var(--text-muted);">{{ owner.email }}</div>
+        <div style="font-size: 12px; color: var(--text-subtle); margin-top: 2px;">User Account ID: {{ invoice.user_id }}</div>
+      </div>
+
+      <div style="text-align: right;">
+        <div style="font-size: 11px; font-weight: 700; color: var(--text-subtle); text-transform: uppercase;">Statement Date:</div>
+        <div style="font-size: 14px; font-weight: 600; color: #fff; margin-top: 4px;">{{ invoice.invoice_date }}</div>
+      </div>
+    </div>
+
+    <!-- Line Item -->
+    <div class="table-responsive" style="margin-bottom: 32px;">
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>Description</th>
+            <th style="text-align: right;">Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>{{ invoice.description }}</strong></td>
+            <td style="text-align: right; font-weight: 700; color: var(--primary-cyan);">${{ "%.2f"|format(invoice.amount) }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="display: flex; justify-content: space-between; align-items: center; pt-16; border-top: 1px solid var(--border-color); padding-top: 16px;">
+      <a href="{{ url_for('invoices') }}" class="btn btn-outline" style="font-size: 12px;">← Back to Invoices</a>
+      <button class="btn btn-primary" onclick="window.print()" style="font-size: 12px;">🖨️ Print Statement</button>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

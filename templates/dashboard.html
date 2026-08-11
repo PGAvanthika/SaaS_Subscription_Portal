@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - CyberVault Security Portal{% endblock %}
+{% block page_title %}SaaS Subscription Overview{% endblock %}
+
+{% block content %}
+<!-- Top Metrics Row -->
+<div class="grid-3">
+  <div class="glass-card">
+    <div class="card-header">
+      <span class="card-title">💳 Active Plan</span>
+      <span class="status-badge secure">Active</span>
+    </div>
+    <div style="font-size: 24px; font-weight: 800; color: var(--primary-cyan);">
+      {{ subscription.plan_name if subscription else 'Free Starter' }}
+    </div>
+    <div style="color: var(--text-muted); font-size: 13px; margin-top: 4px;">
+      Price: ${{ "%.2f"|format(subscription.price) if subscription else '0.00' }} / month
+    </div>
+  </div>
+
+  <div class="glass-card">
+    <div class="card-header">
+      <span class="card-title">📄 Invoices & Billing</span>
+      <span class="nav-icon">🧾</span>
+    </div>
+    <div style="font-size: 24px; font-weight: 800; color: #fff;">
+      {{ invoices|length }} Statement(s)
+    </div>
+    <div style="color: var(--text-muted); font-size: 13px; margin-top: 4px;">
+      Direct link IDOR demo ready
+    </div>
+  </div>
+
+  <div class="glass-card">
+    <div class="card-header">
+      <span class="card-title">🛡️ Security Status</span>
+      <span class="status-badge {% if session.get('security_mode') == 'SECURE' %}secure{% else %}vulnerable{% endif %}">
+        {{ session.get('security_mode', 'VULNERABLE') }}
+      </span>
+    </div>
+    <div style="font-size: 14px; color: var(--text-muted);">
+      {% if session.get('security_mode') == 'SECURE' %}
+        Input sanitization, parameterized queries, rate limits & authorization enforced.
+      {% else %}
+        Raw query concatenation, unescaped XSS output, & IDOR endpoints active.
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- Main Sections Grid -->
+<div class="grid-2">
+  <!-- Invoices Table (IDOR demonstration target) -->
+  <div class="glass-card">
+    <div class="card-header">
+      <h3 class="card-title">📄 Your Invoices</h3>
+      <a href="{{ url_for('invoices') }}" class="btn btn-outline" style="font-size: 12px; padding: 4px 10px;">View All</a>
+    </div>
+    <div class="table-responsive">
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>Invoice ID</th>
+            <th>Description</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if invoices %}
+            {% for inv in invoices %}
+            <tr>
+              <td><code>#INV-{{ inv.id }}</code></td>
+              <td>{{ inv.description }}</td>
+              <td>${{ "%.2f"|format(inv.amount) }}</td>
+              <td><span class="status-badge secure">{{ inv.status }}</span></td>
+              <td>
+                <a href="{{ url_for('view_invoice', invoice_id=inv.id) }}" class="btn btn-outline" style="padding: 4px 8px; font-size: 11px;">
+                  🔍 View Statement
+                </a>
+              </td>
+            </tr>
+            {% endfor %}
+          {% else %}
+            <tr>
+              <td colspan="5" style="text-align: center; color: var(--text-subtle);">No invoices found.</td>
+            </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Support Tickets (Stored XSS demonstration target) -->
+  <div class="glass-card">
+    <div class="card-header">
+      <h3 class="card-title">💬 Support Tickets</h3>
+      <a href="{{ url_for('tickets') }}" class="btn btn-outline" style="font-size: 12px; padding: 4px 10px;">New Ticket</a>
+    </div>
+    
+    <div>
+      {% if tickets %}
+        {% for t in tickets %}
+        <div style="background: rgba(0,0,0,0.3); border-radius: var(--radius-sm); padding: 12px; margin-bottom: 12px; border: 1px solid var(--border-color);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <strong style="color: var(--primary-cyan); font-size: 14px;">{{ t.subject }}</strong>
+            <span class="status-badge secure">{{ t.status }}</span>
+          </div>
+          <!-- NOTE: In Vulnerable mode, message render demonstrates Stored XSS -->
+          <div style="font-size: 13px; color: var(--text-muted);">
+            {% if session.get('security_mode') == 'SECURE' %}
+              {{ t.message }}
+            {% else %}
+              {{ t.message|safe }}
+            {% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      {% else %}
+        <p style="color: var(--text-subtle); text-align: center; padding: 20px;">No support tickets created yet.</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

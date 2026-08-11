@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block title %}Subscriptions - CyberVault{% endblock %}
+{% block page_title %}Select Subscription Plan{% endblock %}
+
+{% block content %}
+<div class="glass-card" style="margin-bottom: 24px;">
+  <div class="card-header">
+    <h3 class="card-title">💳 Current Active Subscription</h3>
+    <span class="status-badge secure">Active</span>
+  </div>
+  <div style="font-size: 18px; font-weight: 700; color: var(--primary-cyan);">
+    {{ current_sub.plan_name if current_sub else 'Free Starter Plan' }} (${{ "%.2f"|format(current_sub.price) if current_sub else '0.00' }}/mo)
+  </div>
+</div>
+
+<h3 style="margin-bottom: 16px; font-weight: 700;">Available Subscription Tiers</h3>
+
+<!-- Parameter Tampering Demo Plan Cards -->
+<div class="grid-3">
+
+  <!-- Free Plan -->
+  <div class="glass-card">
+    <h4 style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">Free Starter</h4>
+    <div style="font-size: 28px; font-weight: 800; color: #fff; margin-bottom: 16px;">$0<span style="font-size: 14px; color: var(--text-subtle);">/mo</span></div>
+    <ul style="list-style: none; margin-bottom: 24px; font-size: 13px; color: var(--text-muted);">
+      <li style="margin-bottom: 6px;">✓ Basic Portal Access</li>
+      <li style="margin-bottom: 6px;">✓ Standard Support</li>
+    </ul>
+
+    <form action="{{ url_for('subscriptions') }}" method="POST">
+      <input type="hidden" name="plan_name" value="CyberVault Free Starter">
+      <input type="hidden" name="price" value="0.00">
+      <button type="submit" class="btn btn-outline" style="width: 100%;">Subscribe Free</button>
+    </form>
+  </div>
+
+  <!-- Pro Plan -->
+  <div class="glass-card" style="border-color: var(--primary-blue);">
+    <div style="background: var(--primary-blue); color: #fff; font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 4px; display: inline-block; margin-bottom: 8px;">POPULAR</div>
+    <h4 style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">Pro Plan</h4>
+    <div style="font-size: 28px; font-weight: 800; color: #fff; margin-bottom: 16px;">$99<span style="font-size: 14px; color: var(--text-subtle);">/mo</span></div>
+    <ul style="list-style: none; margin-bottom: 24px; font-size: 13px; color: var(--text-muted);">
+      <li style="margin-bottom: 6px;">✓ Priority Support</li>
+      <li style="margin-bottom: 6px;">✓ Security Audit Exports</li>
+    </ul>
+
+    <form action="{{ url_for('subscriptions') }}" method="POST" id="proPlanForm">
+      <input type="hidden" name="plan_name" value="CyberVault Pro Plan">
+      <input type="hidden" name="price" id="proPriceInput" value="99.00">
+      
+      {% if session.get('security_mode') == 'VULNERABLE' %}
+      <div style="margin-bottom: 12px; font-size: 11px; background: var(--vuln-red-bg); border: 1px solid var(--vuln-red-border); padding: 6px; border-radius: 4px;">
+        ⚠️ Parameter Tampering Demo: Client sends price input directly!
+        <button type="button" class="btn btn-vuln" style="padding: 2px 6px; font-size: 10px; margin-top: 4px;" onclick="document.getElementById('proPriceInput').value = '0.00'; alert('Price tampered to $0.00!');">Tamper Price to $0.00</button>
+      </div>
+      {% endif %}
+
+      <button type="submit" class="btn btn-primary" style="width: 100%;">Upgrade to Pro</button>
+    </form>
+  </div>
+
+  <!-- Enterprise Plan -->
+  <div class="glass-card" style="border-color: var(--accent-purple);">
+    <h4 style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">Enterprise</h4>
+    <div style="font-size: 28px; font-weight: 800; color: #fff; margin-bottom: 16px;">$499<span style="font-size: 14px; color: var(--text-subtle);">/mo</span></div>
+    <ul style="list-style: none; margin-bottom: 24px; font-size: 13px; color: var(--text-muted);">
+      <li style="margin-bottom: 6px;">✓ Dedicated Security Engineer</li>
+      <li style="margin-bottom: 6px;">✓ 24/7 Phone Incident Response</li>
+    </ul>
+
+    <form action="{{ url_for('subscriptions') }}" method="POST">
+      <input type="hidden" name="plan_name" value="CyberVault Enterprise">
+      <input type="hidden" name="price" id="entPriceInput" value="499.00">
+
+      {% if session.get('security_mode') == 'VULNERABLE' %}
+      <div style="margin-bottom: 12px; font-size: 11px; background: var(--vuln-red-bg); border: 1px solid var(--vuln-red-border); padding: 6px; border-radius: 4px;">
+        ⚠️ Parameter Tampering Demo: Client sends price input directly!
+        <button type="button" class="btn btn-vuln" style="padding: 2px 6px; font-size: 10px; margin-top: 4px;" onclick="document.getElementById('entPriceInput').value = '1.00'; alert('Price tampered to $1.00!');">Tamper Price to $1.00</button>
+      </div>
+      {% endif %}
+
+      <button type="submit" class="btn btn-primary" style="width: 100%; background: linear-gradient(135deg, var(--accent-purple), var(--primary-blue)); color:#fff;">Get Enterprise</button>
+    </form>
+  </div>
+
+</div>
+{% endblock %}

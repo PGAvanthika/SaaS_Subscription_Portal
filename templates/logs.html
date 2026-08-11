@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %}Security Audit Logs - CyberVault{% endblock %}
+{% block page_title %}Security Audit Logs{% endblock %}
+
+{% block content %}
+<div class="glass-card">
+  <div class="card-header">
+    <h3 class="card-title">📜 Security Audit Log Stream</h3>
+    <span class="status-badge secure">Live Audit Trail</span>
+  </div>
+
+  <div class="table-responsive">
+    <table class="custom-table">
+      <thead>
+        <tr>
+          <th>Log ID</th>
+          <th>Event Type</th>
+          <th>Description</th>
+          <th>Status</th>
+          <th>IP Address</th>
+          <th>Timestamp</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if logs %}
+          {% for log in logs %}
+          <tr>
+            <td><code>#LOG-{{ log.id }}</code></td>
+            <td><strong style="color: var(--primary-cyan);">{{ log.event_type }}</strong></td>
+            <td>{{ log.description }}</td>
+            <td>
+              <span class="status-badge {% if 'VULN' in log.status or 'FAIL' in log.status or 'EXPLOITED' in log.status %}vulnerable{% else %}secure{% endif %}">
+                {{ log.status }}
+              </span>
+            </td>
+            <td><code>{{ log.ip_address }}</code></td>
+            <td>{{ log.created_at }}</td>
+          </tr>
+          {% endfor %}
+        {% else %}
+          <tr>
+            <td colspan="6" style="text-align: center; color: var(--text-subtle);">No security logs recorded yet.</td>
+          </tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

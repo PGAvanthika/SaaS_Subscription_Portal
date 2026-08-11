@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block title %}Invoices - CyberVault{% endblock %}
+{% block page_title %}Invoices & Statements{% endblock %}
+
+{% block content %}
+<div class="glass-card">
+  <div class="card-header">
+    <h3 class="card-title">📄 All Subscription Invoices</h3>
+    <span class="status-badge {% if session.get('security_mode') == 'SECURE' %}secure{% else %}vulnerable{% endif %}">
+      {% if session.get('security_mode') == 'SECURE' %}IDOR Check Enforced{% else %}IDOR Target Active{% endif %}
+    </span>
+  </div>
+
+  {% if session.get('security_mode') == 'VULNERABLE' %}
+  <div style="background: var(--vuln-red-bg); border: 1px solid var(--vuln-red-border); padding: 12px; border-radius: var(--radius-sm); margin-bottom: 20px; font-size: 13px;">
+    <strong>⚠️ URL Manipulation / IDOR Demonstration:</strong><br>
+    Try modifying the invoice ID in the URL bar (e.g. changing <code>/invoice/{{ invoices[0].id if invoices else '1' }}</code> to <code>/invoice/1</code>, <code>/invoice/2</code>, etc.). In Vulnerable mode, any user can view any other user's invoice details!
+  </div>
+  {% endif %}
+
+  <div class="table-responsive">
+    <table class="custom-table">
+      <thead>
+        <tr>
+          <th>Invoice ID</th>
+          <th>Description</th>
+          <th>Amount</th>
+          <th>Date</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if invoices %}
+          {% for inv in invoices %}
+          <tr>
+            <td><code>#INV-{{ inv.id }}</code></td>
+            <td>{{ inv.description }}</td>
+            <td>${{ "%.2f"|format(inv.amount) }}</td>
+            <td>{{ inv.invoice_date }}</td>
+            <td><span class="status-badge secure">{{ inv.status }}</span></td>
+            <td>
+              <a href="{{ url_for('view_invoice', invoice_id=inv.id) }}" class="btn btn-outline" style="font-size: 11px; padding: 4px 8px;">
+                🔍 View PDF Statement
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+        {% else %}
+          <tr>
+            <td colspan="6" style="text-align: center; color: var(--text-subtle);">No invoices found for this account.</td>
+          </tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

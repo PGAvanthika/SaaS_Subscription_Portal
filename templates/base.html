@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}CyberVault - SaaS Security Portal{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+  <div class="app-wrapper">
+    {% if session.get('user_id') %}
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="brand-icon">🛡️</div>
+        <div>
+          <div class="brand-text">CYBERVAULT</div>
+        </div>
+        <span class="brand-tag">v1.0</span>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-label">Main Portal</div>
+        <a href="{{ url_for('dashboard') }}" class="nav-item {% if request.path == url_for('dashboard') %}active{% endif %}">
+          <span class="nav-icon">📊</span> Dashboard
+        </a>
+        <a href="{{ url_for('subscriptions') }}" class="nav-item {% if request.path == url_for('subscriptions') %}active{% endif %}">
+          <span class="nav-icon">💳</span> Subscriptions
+        </a>
+        <a href="{{ url_for('invoices') }}" class="nav-item {% if request.path == url_for('invoices') %}active{% endif %}">
+          <span class="nav-icon">📄</span> Invoices & Billing
+        </a>
+        <a href="{{ url_for('tickets') }}" class="nav-item {% if request.path == url_for('tickets') %}active{% endif %}">
+          <span class="nav-icon">💬</span> Support Tickets
+        </a>
+
+        <div class="nav-label">Security Lab</div>
+        <a href="{{ url_for('security_lab') }}" class="nav-item {% if request.path == url_for('security_lab') %}active{% endif %}">
+          <span class="nav-icon">🧪</span> Security Controls
+        </a>
+        <a href="{{ url_for('security_logs') }}" class="nav-item {% if request.path == url_for('security_logs') %}active{% endif %}">
+          <span class="nav-icon">📜</span> Audit Logs
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-pill">
+          <div class="user-avatar">{{ session.get('username', 'U')[0]|upper }}</div>
+          <div class="user-info">
+            <span class="user-name">{{ session.get('username') }}</span>
+            <span class="user-role">{{ session.get('role', 'user')|capitalize }}</span>
+          </div>
+          <a href="{{ url_for('logout') }}" style="margin-left:auto; font-size:16px;" title="Logout">🚪</a>
+        </div>
+      </div>
+    </aside>
+    {% endif %}
+
+    <!-- Main Workspace -->
+    <main class="main-wrapper" {% if not session.get('user_id') %}style="margin-left:0;"{% endif %}>
+      <header class="topbar">
+        <div class="page-title-group">
+          <h1 class="page-title">{% block page_title %}CyberVault Portal{% endblock %}</h1>
+        </div>
+
+        <div class="security-toggle-container">
+          <span class="toggle-label">Security Mode:</span>
+          <label class="toggle-switch">
+            <input type="checkbox" id="securityModeToggle" {% if session.get('security_mode') == 'SECURE' %}checked{% endif %}>
+            <span class="slider"></span>
+          </label>
+          <span id="securityBadge" class="status-badge {% if session.get('security_mode') == 'SECURE' %}secure{% else %}vulnerable{% endif %}">
+            {% if session.get('security_mode') == 'SECURE' %}🛡️ SECURE MODE{% else %}⚠️ VULNERABLE MODE{% endif %}
+          </span>
+        </div>
+      </header>
+
+      <div class="content-container">
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="toast {{ 'vulnerable' if category == 'danger' or category == 'error' else 'secure' if category == 'success' else 'info' }}" style="margin-bottom:20px; position:static;">
+                <span>{{ message }}</span>
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+      </div>
+    </main>
+  </div>
+
+  <div id="toastContainer" class="toast-container"></div>
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

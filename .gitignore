@@ -1,0 +1,24 @@
+# Environment & Secret files
+.env
+
+# Database & SQLite files
+*.db
+*.sqlite
+*.sqlite3
+cybervault.db
+
+# Python Bytecode & Cache files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Python Virtual Environments
+.venv/
+venv/
+ENV/
+env/
+
+# IDE & OS Metadata
+.DS_Store
+.vscode/
+.idea/
