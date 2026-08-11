@@ -99,11 +99,13 @@ SaaSFlow addresses this gap by providing a functional, full-stack SaaS environme
 ---
 
 ### 7.4 Parameter Tampering
-* **What It Is**: Parameter Tampering occurs when an application trusts client-submitted form inputs or query parameters (such as price, quantity, or role) for authorization or billing decisions.
+* **What It Is**: Parameter Tampering occurs when an application trusts client-submitted form inputs or query parameters (such as price, quantity, or role) for authorization or billing decisions without server-side validation.
 * **How It Works in SaaSFlow**:
-  * *Vulnerable Mode*: Subscription checkout reads price directly from the submitted HTTP form data (`price = float(request.form.get('price'))`). Submitting a modified form value of `$0.00` grants paid Pro ($99) or Enterprise ($499) plans for free.
+  * The subscription UI presents a standard professional billing page submitting `plan_name` and `<input type="hidden" name="price" value="99.00">`.
+  * Testers alter the hidden form `price` field value to `$0.00` using Browser Developer Tools (Inspect Element / Network tab) before clicking **Subscribe**.
+  * *Vulnerable Mode*: Backend evaluates `price = float(request.form.get('price'))`, directly creating a `$0.00` subscription invoice for the $99 Pro Plan.
 * **How It Is Rectified**:
-  * *Secure Mode*: The server ignores client-submitted price inputs and looks up authoritative pricing from an internal server-side catalog: `price = PLANS_CATALOG.get(plan_name)`.
+  * *Secure Mode*: The backend ignores the client-submitted `price` parameter and retrieves the authoritative pricing directly from the server-side catalog (`PLANS_CATALOG[plan_name]`), enforcing the official `$99.00` price regardless of client parameter tampering.
 
 ---
 

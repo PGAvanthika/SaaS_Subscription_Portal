@@ -167,7 +167,7 @@ def subscriptions():
         else:
             # SECURE MODE: Validates price against authoritative server catalog
             final_price = PLANS.get(plan_name, 0.00)
-            add_security_log("PARAM_TAMPER_SECURE", f"Server verified price for {plan_name} as ${final_price}", "SECURE")
+            add_security_log("PARAM_TAMPER_SECURE", f"Server enforced catalog price for {plan_name} as ${final_price:.2f} (Client submitted ${float(client_price):.2f})", "SECURE")
 
         # Update or create subscription
         execute_param_sql_secure("INSERT INTO subscriptions (user_id, plan_name, price, status) VALUES (%s, %s, %s, 'active');", (user_id, plan_name, final_price))

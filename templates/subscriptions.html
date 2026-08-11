@@ -50,15 +50,7 @@
 
     <form action="{{ url_for('subscriptions') }}" method="POST">
       <input type="hidden" name="plan_name" value="SaaSFlow Pro Plan">
-      <input type="hidden" name="price" id="proPriceInput" value="99.00">
-      
-      {% if session.get('security_mode') == 'VULNERABLE' %}
-      <div style="margin-bottom: 12px; font-size: 11px; background: var(--status-vuln-bg); border: 1px solid var(--status-vuln-border); padding: 8px; border-radius: 4px; color: #f43f5e;">
-        Parameter Tampering Demo: Form submits price input directly!
-        <button type="button" class="btn btn-danger" style="padding: 2px 6px; font-size: 10px; margin-top: 4px; width:100%;" onclick="document.getElementById('proPriceInput').value = '0.00'; alert('Price tampered to $0.00!');">Tamper Price to $0.00</button>
-      </div>
-      {% endif %}
-
+      <input type="hidden" name="price" value="99.00">
       <button type="submit" class="btn btn-primary" style="width: 100%;">Upgrade to Pro</button>
     </form>
   </div>
@@ -74,15 +66,7 @@
 
     <form action="{{ url_for('subscriptions') }}" method="POST">
       <input type="hidden" name="plan_name" value="SaaSFlow Enterprise Security">
-      <input type="hidden" name="price" id="entPriceInput" value="499.00">
-
-      {% if session.get('security_mode') == 'VULNERABLE' %}
-      <div style="margin-bottom: 12px; font-size: 11px; background: var(--status-vuln-bg); border: 1px solid var(--status-vuln-border); padding: 8px; border-radius: 4px; color: #f43f5e;">
-        Parameter Tampering Demo: Form submits price input directly!
-        <button type="button" class="btn btn-danger" style="padding: 2px 6px; font-size: 10px; margin-top: 4px; width:100%;" onclick="document.getElementById('entPriceInput').value = '1.00'; alert('Price tampered to $1.00!');">Tamper Price to $1.00</button>
-      </div>
-      {% endif %}
-
+      <input type="hidden" name="price" value="499.00">
       <button type="submit" class="btn btn-primary" style="width: 100%;">Subscribe Enterprise</button>
     </form>
   </div>
